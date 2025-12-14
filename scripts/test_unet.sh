@@ -15,9 +15,9 @@ set -euo pipefail
 # Go to your project
 cd /home/willzhao/diffusion
 
-module load miniforge/24.3.0-0
-
 source /home/willzhao/myenv/bin/activate
+
+module load miniforge/24.3.0-0
 
 pip install -r /home/willzhao/diffusion/requirements.txt
 
