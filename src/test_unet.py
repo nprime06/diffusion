@@ -25,16 +25,16 @@ class MNISTClassifier(nn.Module):
     def __init__(self, in_channels, hidden_channels, num_layers):
         super().__init__()
         self.unet = UNet(in_channels, hidden_channels, num_layers)
-        self.fc1 = nn.Linear(hidden_channels * 28 * 28, 512)
+        self.fc1 = nn.Linear(hidden_channels * 28 * 28, 64)
         self.act = nn.ReLU()
-        self.fc2 = nn.Linear(512, 10)
+        self.fc2 = nn.Linear(64, 10)
     def forward(self, x):
         x = self.unet(x).reshape(x.shape[0], -1)
         x = self.act(self.fc1(x))
         x = self.fc2(x)
         return x
 
-mnist_classifier = MNISTClassifier(in_channels=1, hidden_channels=16, num_layers=2).to(device)
+mnist_classifier = MNISTClassifier(in_channels=1, hidden_channels=64, num_layers=2).to(device)
 optimizer = optim.Adam(mnist_classifier.parameters(), lr=TrainingConfig.learning_rate)
 
 total_params = sum(p.numel() for p in mnist_classifier.parameters())
