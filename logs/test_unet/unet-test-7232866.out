@@ -1,0 +1,8 @@
+Requirement already satisfied: numpy in /orcd/home/002/willzhao/myenv/lib/python3.6/site-packages (from -r /home/willzhao/diffusion/requirements.txt (line 1)) (1.19.5)
+Requirement already satisfied: idx2numpy in /orcd/home/002/willzhao/myenv/lib/python3.6/site-packages (from -r /home/willzhao/diffusion/requirements.txt (line 2)) (1.2.3)
+Requirement already satisfied: torch in /orcd/home/002/willzhao/myenv/lib/python3.6/site-packages (from -r /home/willzhao/diffusion/requirements.txt (line 3)) (1.10.2)
+Requirement already satisfied: six in /orcd/home/002/willzhao/myenv/lib/python3.6/site-packages (from idx2numpy->-r /home/willzhao/diffusion/requirements.txt (line 2)) (1.17.0)
+Requirement already satisfied: typing-extensions in /orcd/home/002/willzhao/myenv/lib/python3.6/site-packages (from torch->-r /home/willzhao/diffusion/requirements.txt (line 3)) (4.1.1)
+Requirement already satisfied: dataclasses in /orcd/home/002/willzhao/myenv/lib/python3.6/site-packages (from torch->-r /home/willzhao/diffusion/requirements.txt (line 3)) (0.8)
+Using device: cuda
+Total number of parameters: 6596154
