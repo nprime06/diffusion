@@ -2,8 +2,11 @@
 
 data/
 │
+
 ├── MNIST/
+
 ├── CIFAR10/
+
 └── etc.
 
 
