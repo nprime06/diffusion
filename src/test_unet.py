@@ -19,7 +19,7 @@ class TrainingConfig:
     batch_size: int = 64
     device: str = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-train_dataloader = DataLoader(MNISTDataloader(train_images_path='/home/willzhao/diffusion/data/MNIST/train-images.idx3-ubyte', train_labels_path='/home/willzhao/diffusion/data/MNIST/train-labels.idx1-ubyte', test_images_path='/home/willzhao/diffusion/data/MNIST/test-images.idx3-ubyte', test_labels_path='/home/willzhao/diffusion/data/MNIST/test-labels.idx1-ubyte'), batch_size=TrainingConfig.batch_size, shuffle=True)
+train_dataloader = DataLoader(MNISTDataloader(train_images_path='/home/willzhao/data/MNIST/train-images.idx3-ubyte', train_labels_path='/home/willzhao/data/MNIST/train-labels.idx1-ubyte', test_images_path='/home/willzhao/data/MNIST/test-images.idx3-ubyte', test_labels_path='/home/willzhao/data/MNIST/test-labels.idx1-ubyte'), batch_size=TrainingConfig.batch_size, shuffle=True)
 
 class MNISTClassifier(nn.Module):
     def __init__(self, in_channels, hidden_channels, num_layers):

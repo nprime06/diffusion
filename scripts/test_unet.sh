@@ -7,16 +7,13 @@
 #SBATCH --mem=64G
 #SBATCH --gres=gpu:h200:1
 #SBATCH -t 02:00:00
-#SBATCH --output=logs/%x-%j.out
-#SBATCH --error=logs/%x-%j.err
+#SBATCH --output=/home/willzhao/diffusion/logs/test_unet/%x-%j.out
+#SBATCH --error=/home/willzhao/diffusion/logs/test_unet/%x-%j.err
 
 set -euo pipefail
 
 # Go to your project
 cd /home/willzhao/diffusion
-
-# Make sure logs dir exists
-mkdir -p logs
 
 # Load python (ORCD recipe uses miniforge)
 module load miniforge/24.3.0-0
@@ -28,4 +25,4 @@ source /home/willzhao/myenv/bin/activate
 export PYTHONUNBUFFERED=1
 
 # Run training (edit to match your entry point)
-python src/test.py
+python /home/willzhao/diffusion/src/test_unet.py
