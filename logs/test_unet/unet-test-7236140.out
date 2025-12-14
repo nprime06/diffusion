@@ -1,0 +1,115 @@
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: numpy in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from -r /home/willzhao/diffusion/requirements.txt (line 1)) (1.26.4)
+Requirement already satisfied: idx2numpy in /orcd/home/002/willzhao/.local/lib/python3.10/site-packages (from -r /home/willzhao/diffusion/requirements.txt (line 2)) (1.2.3)
+Requirement already satisfied: torch in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from -r /home/willzhao/diffusion/requirements.txt (line 3)) (2.5.1)
+Requirement already satisfied: six in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from idx2numpy->-r /home/willzhao/diffusion/requirements.txt (line 2)) (1.17.0)
+Requirement already satisfied: filelock in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from torch->-r /home/willzhao/diffusion/requirements.txt (line 3)) (3.16.1)
+Requirement already satisfied: typing-extensions>=4.8.0 in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from torch->-r /home/willzhao/diffusion/requirements.txt (line 3)) (4.12.2)
+Requirement already satisfied: networkx in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from torch->-r /home/willzhao/diffusion/requirements.txt (line 3)) (3.4.2)
+Requirement already satisfied: jinja2 in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from torch->-r /home/willzhao/diffusion/requirements.txt (line 3)) (3.1.4)
+Requirement already satisfied: fsspec in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from torch->-r /home/willzhao/diffusion/requirements.txt (line 3)) (2024.10.0)
+Requirement already satisfied: sympy==1.13.1 in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from torch->-r /home/willzhao/diffusion/requirements.txt (line 3)) (1.13.1)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from sympy==1.13.1->torch->-r /home/willzhao/diffusion/requirements.txt (line 3)) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from jinja2->torch->-r /home/willzhao/diffusion/requirements.txt (line 3)) (3.0.2)
+Using device: cuda
+Total number of parameters: 5893002
+Epoch 1/100, Loss: 0.014375298283994198, Accuracy: 0.9631714285714286
+Epoch 2/100, Loss: 0.027886489406228065, Accuracy: 0.9876285714285714
+Epoch 3/100, Loss: 0.0021287871059030294, Accuracy: 0.9908285714285714
+Epoch 4/100, Loss: 0.0006982996710576117, Accuracy: 0.9938
+Epoch 5/100, Loss: 0.034969110041856766, Accuracy: 0.9955857142857143
+Epoch 6/100, Loss: 0.0003850763023365289, Accuracy: 0.9965285714285714
+Epoch 7/100, Loss: 0.01462057325989008, Accuracy: 0.9966571428571429
+Epoch 8/100, Loss: 0.002143972786143422, Accuracy: 0.9977285714285714
+Epoch 9/100, Loss: 0.00038704846519976854, Accuracy: 0.9987428571428572
+Epoch 10/100, Loss: 0.00010269977065036073, Accuracy: 0.9974142857142857
+Epoch 11/100, Loss: 2.786422328426852e-06, Accuracy: 0.9985714285714286
+Epoch 12/100, Loss: 0.00016334105748683214, Accuracy: 0.9985571428571428
+Epoch 13/100, Loss: 6.432277928070107e-07, Accuracy: 0.9983857142857143
+Epoch 14/100, Loss: 5.746437182096997e-06, Accuracy: 0.9993285714285715
+Epoch 15/100, Loss: 1.0952220463877893e-06, Accuracy: 0.9981714285714286
+Epoch 16/100, Loss: 4.161268952884711e-05, Accuracy: 0.9995142857142857
+Epoch 17/100, Loss: 3.9373535400955006e-05, Accuracy: 0.9986571428571429
+Epoch 18/100, Loss: 5.712039410354919e-07, Accuracy: 0.9995428571428572
+Epoch 19/100, Loss: 7.202218199608978e-08, Accuracy: 0.9978571428571429
+Epoch 20/100, Loss: 7.450580152834618e-09, Accuracy: 0.9992428571428571
+Epoch 21/100, Loss: 1.0095574907609262e-05, Accuracy: 0.9997714285714285
+Epoch 22/100, Loss: 2.771748222585302e-05, Accuracy: 0.9986714285714285
+Epoch 23/100, Loss: 9.934105982267738e-09, Accuracy: 0.9992571428571428
+Epoch 24/100, Loss: 0.011993884108960629, Accuracy: 0.9989285714285714
+Epoch 25/100, Loss: 4.494554013945162e-05, Accuracy: 0.9987857142857143
+Epoch 26/100, Loss: 5.712103856581052e-08, Accuracy: 0.9992571428571428
+Epoch 27/100, Loss: 3.99668060708791e-05, Accuracy: 0.9992285714285715
+Epoch 28/100, Loss: 4.967052991133869e-09, Accuracy: 0.9989857142857143
+Epoch 29/100, Loss: 0.0, Accuracy: 0.9993285714285715
+Epoch 30/100, Loss: 6.798532558605075e-05, Accuracy: 0.9996714285714285
+Epoch 31/100, Loss: 2.790062535495963e-05, Accuracy: 0.9990571428571429
+Epoch 32/100, Loss: 0.0, Accuracy: 0.9993285714285715
+Epoch 33/100, Loss: 0.0, Accuracy: 0.9993714285714286
+Epoch 34/100, Loss: 0.016682056710124016, Accuracy: 0.9994571428571428
+Epoch 35/100, Loss: 9.266511915484443e-05, Accuracy: 0.9996571428571429
+Epoch 36/100, Loss: 8.583977614762262e-05, Accuracy: 0.999
+Epoch 37/100, Loss: 0.0, Accuracy: 0.9990428571428571
+Epoch 38/100, Loss: 0.0821089819073677, Accuracy: 0.9994571428571428
+Epoch 39/100, Loss: 0.0002747851249296218, Accuracy: 0.9996857142857143
+Epoch 40/100, Loss: 4.2219912899099654e-08, Accuracy: 0.9992142857142857
+Epoch 41/100, Loss: 0.0, Accuracy: 0.9994857142857143
+Epoch 42/100, Loss: 7.4505792646561986e-09, Accuracy: 0.9994857142857143
+Epoch 43/100, Loss: 0.0, Accuracy: 0.9995428571428572
+Epoch 44/100, Loss: 1.7508128848930937e-06, Accuracy: 0.9991285714285715
+Epoch 45/100, Loss: 0.0032269058283418417, Accuracy: 0.9995714285714286
+Epoch 46/100, Loss: 2.4274746465380304e-05, Accuracy: 0.9995285714285714
+Epoch 47/100, Loss: 0.006372492294758558, Accuracy: 0.9995285714285714
+Epoch 48/100, Loss: 0.0, Accuracy: 0.9995142857142857
+Epoch 49/100, Loss: 0.0, Accuracy: 0.9995285714285714
+Epoch 50/100, Loss: 0.0, Accuracy: 0.9995285714285714
+Epoch 51/100, Loss: 0.0, Accuracy: 0.9998857142857143
+Epoch 52/100, Loss: 1.2417630479433228e-08, Accuracy: 0.9994571428571428
+Epoch 53/100, Loss: 0.0, Accuracy: 0.9993714285714286
+Epoch 54/100, Loss: 0.0, Accuracy: 0.9995857142857143
+Epoch 55/100, Loss: 0.0, Accuracy: 0.9992285714285715
+Epoch 56/100, Loss: 0.0, Accuracy: 0.9995
+Epoch 57/100, Loss: 0.0, Accuracy: 0.9994142857142857
+Epoch 58/100, Loss: 1.6564785028094775e-06, Accuracy: 0.9995142857142857
+Epoch 59/100, Loss: 0.0, Accuracy: 0.9994428571428572
+Epoch 60/100, Loss: 1.9619768920620118e-07, Accuracy: 0.9996714285714285
+Epoch 61/100, Loss: 0.0016493721632286906, Accuracy: 0.9995
+Epoch 62/100, Loss: 0.0, Accuracy: 0.9995714285714286
+Epoch 63/100, Loss: 3.352734267991764e-07, Accuracy: 0.9997571428571429
+Epoch 64/100, Loss: 0.0, Accuracy: 0.9993142857142857
+Epoch 65/100, Loss: 0.0, Accuracy: 0.9998428571428571
+Epoch 66/100, Loss: 3.970781108364463e-06, Accuracy: 0.9996571428571429
+Epoch 67/100, Loss: 0.0, Accuracy: 0.9995
+Epoch 68/100, Loss: 0.0, Accuracy: 0.9996714285714285
+Epoch 69/100, Loss: 0.0, Accuracy: 0.9994857142857143
+Epoch 70/100, Loss: 0.0037062771152704954, Accuracy: 0.9993714285714286
+Epoch 71/100, Loss: 0.0, Accuracy: 0.9994285714285714
+Epoch 72/100, Loss: 0.0, Accuracy: 0.9997714285714285
+Epoch 73/100, Loss: 0.0, Accuracy: 0.9994142857142857
+Epoch 74/100, Loss: 3.6755872656613064e-07, Accuracy: 0.9993571428571428
+Epoch 75/100, Loss: 0.0, Accuracy: 0.9998
+Epoch 76/100, Loss: 0.0, Accuracy: 0.9993571428571428
+Epoch 77/100, Loss: 0.0, Accuracy: 0.9995857142857143
+Epoch 78/100, Loss: 0.0, Accuracy: 0.9998
+Epoch 79/100, Loss: 0.0, Accuracy: 0.9995428571428572
+Epoch 80/100, Loss: 0.0, Accuracy: 0.9997142857142857
+Epoch 81/100, Loss: 0.0, Accuracy: 0.9996
+Epoch 82/100, Loss: 1.0378556908108294e-05, Accuracy: 0.9998142857142858
+Epoch 83/100, Loss: 0.0, Accuracy: 0.9996571428571429
+Epoch 84/100, Loss: 0.0, Accuracy: 0.9992571428571428
+Epoch 85/100, Loss: 0.0, Accuracy: 0.9997142857142857
+Epoch 86/100, Loss: 0.00017896197095979005, Accuracy: 0.9997714285714285
+Epoch 87/100, Loss: 0.0, Accuracy: 0.9997428571428572
+Epoch 88/100, Loss: 0.0, Accuracy: 0.9995571428571428
+Epoch 89/100, Loss: 0.0, Accuracy: 0.9995285714285714
+Epoch 90/100, Loss: 0.0, Accuracy: 0.9996571428571429
+Epoch 91/100, Loss: 0.0, Accuracy: 0.9996428571428572
+Epoch 92/100, Loss: 0.0, Accuracy: 0.9998
+Epoch 93/100, Loss: 0.0, Accuracy: 0.9996
+Epoch 94/100, Loss: 0.0, Accuracy: 0.9994571428571428
+Epoch 95/100, Loss: 0.0, Accuracy: 0.9996142857142857
+Epoch 96/100, Loss: 0.0, Accuracy: 0.9996
+Epoch 97/100, Loss: 0.0, Accuracy: 0.9996714285714285
+Epoch 98/100, Loss: 0.0, Accuracy: 0.9995428571428572
+Epoch 99/100, Loss: 0.0, Accuracy: 0.9997857142857143
+Epoch 100/100, Loss: 0.0, Accuracy: 0.9997
