@@ -15,14 +15,12 @@ set -euo pipefail
 # Go to your project
 cd /home/willzhao/diffusion
 
-# Load python (ORCD recipe uses miniforge)
 module load miniforge/24.3.0-0
 
-# Use your existing venv
 source /home/willzhao/myenv/bin/activate
 
-# Helpful for seeing prints immediately in output files
+pip install -r /home/willzhao/diffusion/requirements.txt
+
 export PYTHONUNBUFFERED=1
 
-# Run training (edit to match your entry point)
 python /home/willzhao/diffusion/src/test_unet.py
