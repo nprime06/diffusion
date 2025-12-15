@@ -2,25 +2,42 @@
 
 ```text
 data/
-│
 ├── MNIST/
 ├── CIFAR10/
 └── etc/
 
 diffusion/
-│
 ├── src/
-│   ├── data.py              # data loader
-│   ├── embedding.py         # projected sinusoidal proj
-│   ├── main.py
-│   ├── model.py             # UNet and DiT
-│   ├── nn.py                # building blocks
-│   ├── test_unet.py
-│   ├── test_vit.py
+│   ├── data.py
+│   ├── embedding.py
 │   │
-│   └── training/
-│       ├── ddpm.py
-│       └── fm.py
+│   ├── nn/
+│   │   ├── __init__.py
+│   │   ├── convblock.py
+│   │   ├── resblock.py
+│   │   ├── unet.py
+│   │   ├── resunet.py
+│   │   ├── ?.py
+│   │   └── dit.py
+│   │
+│   ├── methods/
+│   │   ├── ddpm/
+│   │   │   ├── loss.py
+│   │   │   ├── schedule.py
+│   │   │   └── sampler.py
+│   │   └── fm/
+│   │       ├── loss.py
+│   │       └── sampler.py
+│   │
+│   ├── training/
+│   │   ├── train_ddpm.py
+│   │   └── train_fm.py
+│   │
+│   ├── main.py
+│   │
+│   └── test_arch/
+│       ├── test_unet.py
+│       └── test_vit.py
 │
 ├── logs/
 ├── checkpoints/
@@ -30,3 +47,7 @@ diffusion/
 ├── requirements.txt
 ├── README.md
 └── .gitignore
+
+conceptual flow: 
+train -> save stuff in logs, checkpoints
+samples -> model from checkpoints
