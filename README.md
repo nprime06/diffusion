@@ -1,7 +1,7 @@
 ## File Structure
 
 ```text
-data/
+data/ (on cloud)
 ├── MNIST/
 ├── CIFAR10/
 └── etc/
@@ -12,7 +12,6 @@ diffusion/
 │   ├── embedding.py
 │   │
 │   ├── nn/
-│   │   ├── __init__.py
 │   │   ├── convblock.py
 │   │   ├── resblock.py
 │   │   ├── unet.py
