@@ -12,15 +12,11 @@
 
 set -euo pipefail
 
-# Go to your project
 cd /home/willzhao/diffusion
-
 source /home/willzhao/myenv/bin/activate
-
 module load miniforge/24.3.0-0
-
 pip install -r /home/willzhao/diffusion/requirements.txt
 
 export PYTHONUNBUFFERED=1
 
-python /home/willzhao/diffusion/src/test_unet.py
+python /home/willzhao/diffusion/src/test_arch/test_unet.py
