@@ -38,15 +38,25 @@ diffusion/
 │       ├── test_unet.py
 │       └── test_vit.py
 │
-├── logs/
-├── checkpoints/
 ├── scripts/
-├── samples/
+├── logs/
+│   └── method/
+│       └── method_backbone_date_time/
+│           ├── checkpoints/
+│           ├── metrics/
+│           ├── samples/
+│           ├── .err
+│           ├── .out
+│           └── run.yaml
 │
 ├── requirements.txt
 ├── README.md
 └── .gitignore
 
-conceptual flow: 
-train -> save stuff in logs, checkpoints
-samples -> model from checkpoints
+
+example run:
+* create /logs/ddpm/ddpm_unet_2025-12-17_23-59-59
+* save in run.yaml hyperparams (model arch, optimizer, etc.) and other config (e.g. schedule) for reproducibility
+* checkpoints: save state dict every x steps/epochs
+* metrics: save .jsonl of loss per step
+* samples: save samples every y steps/epochs
