@@ -37,7 +37,7 @@ class ResBlockUNet(nn.Module):
 
         self.out_conv = nn.Conv2d(hidden_channels, in_channels, kernel_size=1)
 
-    def forward(self, x, t):
+    def forward(self, x, t): # x: (B, C, H, W), t: (B,)
         t_emb = self.time_embedding(t)
         skip_connections = []
         for down_block in self.down_blocks:

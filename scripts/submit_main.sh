@@ -5,7 +5,7 @@ ROOT_DIR="/home/willzhao/diffusion"
 : "${METHOD:?Set method}"
 : "${BACKBONE:?Set backbone}"
 
-JOB_SCRIPT="${ROOT_DIR}/scripts/${METHOD}_${BACKBONE}.sh"
+JOB_SCRIPT="${ROOT_DIR}/scripts/main_job.sh"
 if [[ ! -f "${JOB_SCRIPT}" ]]; then
   echo "Job script not found: ${JOB_SCRIPT}" 1>&2
   exit 1

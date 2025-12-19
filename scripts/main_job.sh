@@ -12,7 +12,6 @@ set -euo pipefail
 
 : "${RUN_DIR:?RUN_DIR must be set by the submit wrapper}"
 
-# Go to your project
 cd /home/willzhao/diffusion
 
 source /home/willzhao/myenv/bin/activate
@@ -20,10 +19,9 @@ module load miniforge/24.3.0-0
 pip install -r /home/willzhao/diffusion/requirements.txt
 export PYTHONUNBUFFERED=1
 
-# Create subfolders for this run
 mkdir -p "${RUN_DIR}/checkpoints" "${RUN_DIR}/metrics" "${RUN_DIR}/samples"
 
 # Make src/ importable as a source root
 export PYTHONPATH="/home/willzhao/diffusion/src:${PYTHONPATH:-}"
 
-python /home/willzhao/diffusion/src/main.py --run-dir "${RUN_DIR}"
+python /home/willzhao/diffusion/src/main.py --run-dir "${RUN_DIR}" --method "${METHOD}" --backbone "${BACKBONE}"
