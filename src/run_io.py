@@ -41,7 +41,7 @@ def save_checkpoint(checkpoint_dir, step, model, optimizer):
     )
     return
 
-def save_samples_gif(samples_dir, step, samples, gif_duration=5.0): # samples: (T, N, 1, H, W); 1 channel grayscale
+def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s=0.1, linger_final_s=2.0):
     filename = f"step_{int(step):08d}.gif"
     path = os.path.join(samples_dir, filename)
 
@@ -50,10 +50,21 @@ def save_samples_gif(samples_dir, step, samples, gif_duration=5.0): # samples: (
 
     rows = int(math.floor(math.sqrt(N)))
     cols = int(math.ceil(N / rows))
-    duration_ms = int(math.ceil((gif_duration * 1000.0) / T))
+
+    # Pick up to max_frames timesteps, evenly spaced, always including the final frame.
+    K = int(min(max_frames, T))
+    if K <= 1:
+        frame_idxs = np.array([T - 1], dtype=int)
+    else:
+        frame_idxs = np.linspace(0, T - 1, num=K, dtype=int)
+        frame_idxs[-1] = T - 1
+
+    duration_ms = int(round(frame_duration_s * 1000.0))
+    durations_ms = [duration_ms] * K
+    durations_ms[-1] = int(round(linger_final_s * 1000.0))
 
     frames = []
-    for t in range(T):
+    for t in frame_idxs:
         fig, axes = plt.subplots(rows, cols, figsize=(cols * 2.0, rows * 2.0))
         axes = np.array(axes).reshape(-1)
         for i, ax in enumerate(axes):
@@ -75,8 +86,8 @@ def save_samples_gif(samples_dir, step, samples, gif_duration=5.0): # samples: (
     frames[0].save(
         path,
         save_all=True,
-        append_images=frames[1:] + ([frames[-1]] * max(1, T // 4)),
-        duration=duration_ms,
+        append_images=frames[1:],
+        duration=durations_ms,
         loop=0,
     )
     return
