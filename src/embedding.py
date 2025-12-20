@@ -14,7 +14,7 @@ class TimeEmbedding(nn.Module):
         self.act = nn.SiLU()
 
     def forward(self, t):
-        powers_base_cast = self.powers_base * t
+        powers_base_cast = self.powers_base * t.unsqueeze(1)
         sin_embed = torch.sin(powers_base_cast)
         cos_embed = torch.cos(powers_base_cast)
         embedding = torch.cat((sin_embed, cos_embed), dim=1) # (b, embed_size)
