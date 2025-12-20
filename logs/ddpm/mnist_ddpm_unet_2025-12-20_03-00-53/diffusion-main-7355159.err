@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/home/willzhao/diffusion/src/main.py", line 101, in <module>
+    trained_model = train_ddpm(model, dataloader, scheduler, train_config, device)
+  File "/orcd/home/002/willzhao/diffusion/src/training/train_ddpm.py", line 40, in train_ddpm
+    save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, scheduler)
+  File "/orcd/home/002/willzhao/diffusion/src/training/train_ddpm.py", line 16, in save_logs
+    xT = torch.randn(num_samples, 1, 28, 28, device=model.device)
+  File "/orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1931, in __getattr__
+    raise AttributeError(
+AttributeError: 'ResUNet' object has no attribute 'device'
