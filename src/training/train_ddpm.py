@@ -6,6 +6,9 @@ from methods.ddpm.sampler import sample
 from run_io import save_checkpoint, flush_losses, save_samples_gif
 
 def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, device, num_samples=16):
+    print("--------------------------------")##########
+    print(f"Saving logs at step {step}")##########
+
     loss_path = os.path.join(run_dir, "metrics", "loss.jsonl")
     checkpoint_dir = os.path.join(run_dir, "checkpoints")
     samples_dir = os.path.join(run_dir, "samples")
@@ -15,6 +18,7 @@ def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, device, n
 
     xT = torch.randn(num_samples, 1, 28, 28, device=device)
     samples = sample(model, xT, scheduler) # history list from xT to x0
+    print("samples.shape:", samples.shape) ###########
     save_samples_gif(samples_dir, step, samples)
 
     return

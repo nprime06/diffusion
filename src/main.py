@@ -28,10 +28,10 @@ run_info = {
 @dataclass
 class TrainConfig:
     learning_rate: float = 1e-3
-    max_steps: int = 100000
+    max_steps: int = 5000
     batch_size: int = 64
     run_dir: str = args.run_dir
-    checkpoint_every: int = 10000 # steps
+    checkpoint_every: int = 500 # steps
 
 train_config = TrainConfig()
 run_info["trainconfig"] = asdict(train_config)
