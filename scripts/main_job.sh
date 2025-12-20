@@ -11,6 +11,9 @@
 set -euo pipefail
 
 : "${RUN_DIR:?RUN_DIR must be set by the submit wrapper}"
+: "${DATASET:?DATASET must be set by the submit wrapper}"
+: "${METHOD:?METHOD must be set by the submit wrapper}"
+: "${BACKBONE:?BACKBONE must be set by the submit wrapper}"
 
 cd /home/willzhao/diffusion
 
@@ -24,4 +27,4 @@ mkdir -p "${RUN_DIR}/checkpoints" "${RUN_DIR}/metrics" "${RUN_DIR}/samples"
 # Make src/ importable as a source root
 export PYTHONPATH="/home/willzhao/diffusion/src:${PYTHONPATH:-}"
 
-python /home/willzhao/diffusion/src/main.py --run-dir "${RUN_DIR}" --method "${METHOD}" --backbone "${BACKBONE}"
+python /home/willzhao/diffusion/src/main.py --run-dir "${RUN_DIR}" --dataset "${DATASET}" --method "${METHOD}" --backbone "${BACKBONE}"

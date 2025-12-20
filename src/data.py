@@ -13,15 +13,15 @@ def load_mnist_images_labels(image_path, label_path, ):
 
     return images, labels
 
-class MNISTDataloader(Dataset):
+class MNISTDataloader(Dataset): # everything is on cpu
     def __init__(self, test_images_path, test_labels_path, train_images_path, train_labels_path):
         self.test_images, self.test_labels = load_mnist_images_labels(test_images_path, test_labels_path)
         self.train_images, self.train_labels = load_mnist_images_labels(train_images_path, train_labels_path)
-        self.images = np.concatenate((self.test_images, self.train_images))
+        self.images = np.concatenate((self.test_images, self.train_images)) # (N, 28, 28)
         self.labels = np.concatenate((self.test_labels, self.train_labels))
     
     def __len__(self):
         return len(self.images)
     
     def __getitem__(self, idx):
-        return self.images[idx], self.labels[idx]
+        return self.images[idx], self.labels[idx] # (28, 28), (1,)

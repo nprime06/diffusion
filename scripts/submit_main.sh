@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="/home/willzhao/diffusion"
+: "${DATASET:?Set dataset}"
 : "${METHOD:?Set method}"
 : "${BACKBONE:?Set backbone}"
 
@@ -12,14 +13,14 @@ if [[ ! -f "${JOB_SCRIPT}" ]]; then
 fi
 
 TS="$(date +%Y-%m-%d_%H-%M-%S)"
-RUN_DIR="${ROOT_DIR}/logs/${METHOD}/${METHOD}_${BACKBONE}_${TS}"
+RUN_DIR="${ROOT_DIR}/logs/${METHOD}/${DATASET}_${METHOD}_${BACKBONE}_${TS}"
 
 mkdir -p "${RUN_DIR}"
 
 sbatch \
   --output="${RUN_DIR}/%x-%j.log" \
   --error="${RUN_DIR}/%x-%j.err" \
-  --export=ALL,RUN_DIR="${RUN_DIR}",METHOD="${METHOD}",BACKBONE="${BACKBONE}" \
+  --export=ALL,RUN_DIR="${RUN_DIR}",DATASET="${DATASET}",METHOD="${METHOD}",BACKBONE="${BACKBONE}" \
   "${JOB_SCRIPT}"
 
 echo "Job submitted: RUN_DIR=${RUN_DIR}"
