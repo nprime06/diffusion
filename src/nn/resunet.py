@@ -1,6 +1,6 @@
 import torch.nn as nn
-from ..embedding import TimeEmbedding
-from .resblock import ResBlock, DownResBlock, UpResBlock
+from embedding import TimeEmbedding
+from nn.resblock import ResBlock, DownResBlock, UpResBlock
 
 class ResUNet(nn.Module):
     def __init__(self, in_channels, hidden_channels, num_layers, embed_dim): # layers > 0 is number of up/down

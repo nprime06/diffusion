@@ -1,5 +1,5 @@
 import torch.nn as nn
-from .convblock import SameConv, DownBlock, UpBlock
+from nn.convblock import SameConv, DownBlock, UpBlock
 
 class UNet(nn.Module):
     def __init__(self, in_channels, hidden_channels, num_layers): # layers > 0 is number of up/down
