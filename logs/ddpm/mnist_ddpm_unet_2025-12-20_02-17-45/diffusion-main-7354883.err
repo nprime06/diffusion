@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/willzhao/diffusion/src/main.py", line 14, in <module>
+    from nn.resunet import ResUNet
+  File "/orcd/home/002/willzhao/diffusion/src/nn/resunet.py", line 2, in <module>
+    from ..embedding import TimeEmbedding
+ImportError: attempted relative import beyond top-level package
