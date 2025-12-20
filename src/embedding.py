@@ -11,7 +11,7 @@ class TimeEmbedding(nn.Module):
         self.min_freq = min_freq
 
         self.proj = nn.Linear(embed_size, embed_dim)
-        self.act = nn.silu()
+        self.act = nn.SiLU()
 
     def forward(self, t):
         powers_base_cast = self.powers_base * t
