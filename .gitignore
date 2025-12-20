@@ -5,10 +5,6 @@ data/
 
 !data/README.md
 
-# ---- ML experiment artifacts (generated) ----
-# Logs / runs / checkpoints / samples should not be committed.
-logs/
-
 # Model checkpoints / weights
 *.pt
 *.pth

@@ -11,8 +11,8 @@ def single_step(model, xt, t, scheduler): # xt: (B, C, H, W), t: (B,)
         pred_eps = model(xt, std_t)
     pred_mu = (xt - (beta / torch.sqrt(1.0 - alpha_prod)) * pred_eps) / torch.sqrt(alpha)
     z = torch.randn_like(xt)
-    no_noise = (t == 1).to(device=xt.device).view(-1, 1, 1, 1)
-    return pred_mu + (1 - no_noise) * torch.sqrt(beta) * z
+    add_noise = (t != 1).to(device=xt.device, dtype=xt.dtype).view(-1, 1, 1, 1)
+    return pred_mu + add_noise * torch.sqrt(beta) * z
 
 def sample(model, xT, scheduler): # xT: (B, C, H, W)
     x = xT.clone()
