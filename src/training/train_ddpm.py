@@ -37,7 +37,7 @@ def train_ddpm(model, dataloader, scheduler, train_config, device): # scheduler,
             loss_buffer.append({"step": step, "loss": loss_item, "lr": optimizer.param_groups[0]["lr"]})
 
             if step % train_config.checkpoint_every == 0:
-                save_logs(train_config.run_dir, loss_buffer, step, model, optimizer)
+                save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, scheduler)
                 
             step += 1
             if step >= train_config.max_steps: break
