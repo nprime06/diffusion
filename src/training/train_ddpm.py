@@ -5,7 +5,7 @@ from methods.ddpm.loss import loss
 from methods.ddpm.sampler import sample
 from run_io import save_checkpoint, flush_losses, save_samples_gif
 
-def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, num_samples=16):
+def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, device, num_samples=16):
     loss_path = os.path.join(run_dir, "metrics", "loss.jsonl")
     checkpoint_dir = os.path.join(run_dir, "checkpoints")
     samples_dir = os.path.join(run_dir, "samples")
@@ -13,7 +13,7 @@ def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, num_sampl
     flush_losses(loss_path, loss_buffer)
     save_checkpoint(checkpoint_dir, step, model, optimizer)
 
-    xT = torch.randn(num_samples, 1, 28, 28, device=model.device)
+    xT = torch.randn(num_samples, 1, 28, 28, device=device)
     samples = sample(model, xT, scheduler) # history list from xT to x0
     save_samples_gif(samples_dir, step, samples)
 
@@ -37,11 +37,11 @@ def train_ddpm(model, dataloader, scheduler, train_config, device): # scheduler,
             loss_buffer.append({"step": step, "loss": loss_item, "lr": optimizer.param_groups[0]["lr"]})
 
             if step % train_config.checkpoint_every == 0:
-                save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, scheduler)
+                save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, scheduler, device)
                 
             step += 1
             if step >= train_config.max_steps: break
     
-    save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, scheduler)
+    save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, scheduler, device)
 
     return model

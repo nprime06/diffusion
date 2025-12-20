@@ -5,6 +5,29 @@ data/
 
 !data/README.md
 
+# ---- ML experiment artifacts (generated) ----
+# Logs / runs / checkpoints / samples should not be committed.
+logs/
+
+# Model checkpoints / weights
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# Generated media (samples)
+*.gif
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.mp4
+*.mov
+
+# If you ever want to keep tiny run metadata, you can explicitly unignore:
+# !logs/**/run.yaml
+# !logs/**/metrics/*.jsonl
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
