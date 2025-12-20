@@ -32,6 +32,7 @@ diffusion/
 │   │   ├── train_ddpm.py
 │   │   └── train_fm.py
 │   │
+│   ├── run_io.py
 │   ├── main.py
 │   │
 │   └── test_arch/
@@ -39,20 +40,26 @@ diffusion/
 │       └── test_vit.py
 │
 ├── scripts/
+│   ├── submit_main.sh
+│   └── main_job.sh
+│
 ├── logs/
 │   └── method/
 │       └── method_backbone_date_time/
 │           ├── checkpoints/
 │           ├── metrics/
 │           ├── samples/
-│           ├── .err
+│           ├── run.yaml
 │           ├── .out
-│           └── run.yaml
+│           └── .err
 │
 ├── requirements.txt
 ├── README.md
 └── .gitignore
 
+how to:
+* set environment vars
+* call submit_main.sh
 
 example run:
 * create /logs/ddpm/ddpm_unet_2025-12-17_23-59-59
