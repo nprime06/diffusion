@@ -28,22 +28,24 @@ run_info = {
 @dataclass
 class TrainConfig:
     learning_rate: float = 1e-3
-    max_steps: int = 500
+    max_steps: int = 50000
     batch_size: int = 64
     run_dir: str = args.run_dir
-    checkpoint_every: int = 100 # steps
+    checkpoint_every: int = 5000 # steps
 
 train_config = TrainConfig()
 run_info["trainconfig"] = asdict(train_config)
 
 if args.dataset == 'mnist':
+    dataset = MNISTDataloader(
+        train_images_path='/home/willzhao/data/MNIST/train-images.idx3-ubyte',
+        train_labels_path='/home/willzhao/data/MNIST/train-labels.idx1-ubyte',
+        test_images_path='/home/willzhao/data/MNIST/test-images.idx3-ubyte',
+        test_labels_path='/home/willzhao/data/MNIST/test-labels.idx1-ubyte',
+    )
+    images_mean, images_std = dataset.get_mean_std()
     dataloader = DataLoader(
-        MNISTDataloader(
-            train_images_path='/home/willzhao/data/MNIST/train-images.idx3-ubyte',
-            train_labels_path='/home/willzhao/data/MNIST/train-labels.idx1-ubyte',
-            test_images_path='/home/willzhao/data/MNIST/test-images.idx3-ubyte',
-            test_labels_path='/home/willzhao/data/MNIST/test-labels.idx1-ubyte',
-        ),
+        dataset,
         batch_size=train_config.batch_size,
         shuffle=True,
         drop_last=True,
@@ -98,4 +100,4 @@ run_info["param_count"] = int(param_count)
 
 write_run_yaml(args.run_dir, run_info)
 
-trained_model = train_ddpm(model, dataloader, scheduler, train_config, device)
+trained_model = train_ddpm(model, dataloader, scheduler, train_config, device, images_mean, images_std)
