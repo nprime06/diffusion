@@ -2,7 +2,7 @@ import torch.nn as nn
 from ..embedding import TimeEmbedding
 from .resblock import ResBlock, DownResBlock, UpResBlock
 
-class ResBlockUNet(nn.Module):
+class ResUNet(nn.Module):
     def __init__(self, in_channels, hidden_channels, num_layers, embed_dim): # layers > 0 is number of up/down
         super().__init__()
         self.time_embedding = TimeEmbedding(embed_dim=embed_dim)

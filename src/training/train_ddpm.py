@@ -1,23 +1,47 @@
 import torch
 import torch.optim as optim
-from dataclasses import dataclass
+import os
 from methods.ddpm.loss import loss
+from methods.ddpm.sampler import sample
+from run_io import save_checkpoint, flush_losses, save_samples_gif
 
+def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, num_samples=16):
+    loss_path = os.path.join(run_dir, "metrics", "loss.jsonl")
+    checkpoint_dir = os.path.join(run_dir, "checkpoints")
+    samples_dir = os.path.join(run_dir, "samples")
+
+    flush_losses(loss_path, loss_buffer)
+    save_checkpoint(checkpoint_dir, step, model, optimizer)
+
+    xT = torch.randn(num_samples, 1, 28, 28, device=model.device)
+    samples = sample(model, xT, scheduler) # history list from xT to x0
+    save_samples_gif(samples_dir, step, samples)
+
+    return
 
 def train_ddpm(model, dataloader, scheduler, train_config): # scheduler, dataloader on cpu; model on device
     optimizer = optim.Adam(model.parameters(), lr=train_config.learning_rate)
+    loss_buffer = []
 
     step = 0
-    for epoch in range(train_config.num_epochs):
+    while step < train_config.max_steps:
         for images, labels in dataloader:
-            images, labels = images.to(model.device), labels.to(model.device)
+            images, labels = images.to(model.device).reshape(-1, 1, 28, 28), labels.to(model.device)
             loss_val = loss(model, images, scheduler)
 
             optimizer.zero_grad()
             loss_val.backward()
             optimizer.step()
 
-            print(f"Epoch {epoch}, Step {step}, Loss: {loss_val.item()}")
+            loss_item = float(loss_val.item())
+            loss_buffer.append({"step": step, "loss": loss_item, "lr": optimizer.param_groups[0]["lr"]})
+
+            if step % train_config.checkpoint_every == 0:
+                save_logs(train_config.run_dir, loss_buffer, step, model, optimizer)
+                
             step += 1
-            
+            if step >= train_config.max_steps: break
+    
+    save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, scheduler)
+
     return model

@@ -1,3 +1,6 @@
 numpy
 idx2numpy
 torch
+pyyaml
+matplotlib
+pillow

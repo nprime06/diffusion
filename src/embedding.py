@@ -1,10 +1,11 @@
 import torch
 import torch.nn as nn
 
-class TimeEmbedding(nn.Module):
+class TimeEmbedding(nn.Module): 
     def __init__(self, embed_dim, embed_size=64, max_freq = 2, min_freq = 0): # freq is log scale
         super().__init__()
-        self.powers_base = 2 * torch.pi * torch.logspace(min_freq, max_freq, steps=embed_size // 2, base=10).unsqueeze(0) # (1, embed_size // 2)
+        powers_base = 2 * torch.pi * torch.logspace(min_freq, max_freq, steps=embed_size // 2, base=10).unsqueeze(0)
+        self.register_buffer("powers_base", powers_base)
         self.embed_dim = embed_dim
         self.max_freq = max_freq
         self.min_freq = min_freq

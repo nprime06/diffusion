@@ -5,7 +5,7 @@ from torch.utils.data import Dataset, DataLoader
 
 def load_mnist_images_labels(image_path, label_path, ):
     images = torch.from_numpy(idx.convert_from_file(open(image_path, 'rb')).copy()).float() # copy to avoid modifying the original data
-    labels = torch.from_numpy(idx.convert_from_file(open(label_path, 'rb')).copy()).long() # copy to avoid modifying the original data
+    labels = torch.from_numpy(idx.convert_from_file(open(label_path, 'rb')).copy()).long()
 
     images_mean = images.mean(dim=0, keepdim=True)
     images_std = images.std(dim=0, keepdim=True)
