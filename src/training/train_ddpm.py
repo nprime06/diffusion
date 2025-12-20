@@ -19,14 +19,14 @@ def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, num_sampl
 
     return
 
-def train_ddpm(model, dataloader, scheduler, train_config): # scheduler, dataloader on cpu; model on device
+def train_ddpm(model, dataloader, scheduler, train_config, device): # scheduler, dataloader on cpu; model on device
     optimizer = optim.Adam(model.parameters(), lr=train_config.learning_rate)
     loss_buffer = []
 
     step = 0
     while step < train_config.max_steps:
         for images, labels in dataloader:
-            images, labels = images.to(model.device).reshape(-1, 1, 28, 28), labels.to(model.device)
+            images, labels = images.to(device).reshape(-1, 1, 28, 28), labels.to(device)
             loss_val = loss(model, images, scheduler)
 
             optimizer.zero_grad()

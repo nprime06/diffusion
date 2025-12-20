@@ -98,4 +98,4 @@ run_info["param_count"] = int(param_count)
 
 write_run_yaml(args.run_dir, run_info)
 
-trained_model = train_ddpm(model, dataloader, scheduler, train_config)
+trained_model = train_ddpm(model, dataloader, scheduler, train_config, device)
