@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/willzhao/diffusion/src/main.py", line 85, in <module>
+    model = ResUNet(
+  File "/orcd/home/002/willzhao/diffusion/src/nn/resunet.py", line 8, in __init__
+    self.time_embedding = TimeEmbedding(embed_dim=embed_dim)
+  File "/orcd/home/002/willzhao/diffusion/src/embedding.py", line 14, in __init__
+    self.act = nn.silu()
+AttributeError: module 'torch.nn' has no attribute 'silu'. Did you mean: 'SiLU'?
