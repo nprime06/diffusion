@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/home/willzhao/diffusion/src/main.py", line 113, in <module>
+    trained_model = train_fm(model, dataloader, fm_config, train_config, device, images_mean, images_std)
+  File "/orcd/home/002/willzhao/diffusion/src/training/train_fm.py", line 41, in train_fm
+    save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, fm_config, device, images_mean, images_std)
+  File "/orcd/home/002/willzhao/diffusion/src/training/train_fm.py", line 17, in save_logs
+    samples = sample(model, x0, fm_config) # history list from x0 to xT; (T, N, 1, 28, 28)
+  File "/orcd/home/002/willzhao/diffusion/src/methods/fm/sampler.py", line 13, in sample
+    v = model(x, t_batch)
+  File "/orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/orcd/home/002/willzhao/diffusion/src/nn/resunet.py", line 41, in forward
+    t_emb = self.time_embedding(t)
+  File "/orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/orcd/home/002/willzhao/diffusion/src/embedding.py", line 21, in forward
+    return self.act(self.proj(embedding))
+  File "/orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages/torch/nn/modules/linear.py", line 125, in forward
+    return F.linear(input, self.weight, self.bias)
+RuntimeError: mat1 and mat2 must have the same dtype, but got Double and Float
