@@ -3,9 +3,9 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-RUN_DIR = "/Users/william/Desktop/Random/diffusion/logs/ddpm/mnist_ddpm_unet_2025-12-20_17-53-28"
+RUN_DIR = "/Users/william/Desktop/Random/diffusion/logs/fm/mnist_fm_unet_2025-12-22_17-43-11"
 
-CUTOFF = 50000
+CUTOFF = 500
 
 steps = []
 losses = []
