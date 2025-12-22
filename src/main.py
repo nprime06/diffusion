@@ -14,6 +14,7 @@ from data import MNISTDataloader
 from nn.resunet import ResUNet
 from methods.ddpm.schedule import DDPMScheduler
 from training.train_ddpm import train_ddpm
+from training.train_fm import train_fm
 from run_io import write_run_yaml
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -69,8 +70,14 @@ if args.method == 'ddpm':
         beta_end=ddpm_config.beta_end, 
         num_steps=ddpm_config.num_steps,
     )
-# elif args.method == 'fm':
-    # idk
+elif args.method == 'fm': 
+    @dataclass
+    class FMConfig:
+        num_steps: int = 100
+        sampler: str = 'euler'
+
+    fm_config = FMConfig()
+    run_info["fmconfig"] = asdict(fm_config)
 else:
     raise ValueError(f"Unsupported method: {args.method}")
 
@@ -100,4 +107,9 @@ run_info["param_count"] = int(param_count)
 
 write_run_yaml(args.run_dir, run_info)
 
-trained_model = train_ddpm(model, dataloader, scheduler, train_config, device, images_mean, images_std)
+if args.method == 'ddpm':
+    trained_model = train_ddpm(model, dataloader, scheduler, train_config, device, images_mean, images_std)
+elif args.method == 'fm':
+    trained_model = train_fm(model, dataloader, fm_config, train_config, device, images_mean, images_std)
+else:
+    raise ValueError(f"Unsupported method: {args.method}")
