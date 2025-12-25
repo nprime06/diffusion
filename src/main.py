@@ -98,6 +98,7 @@ if args.backbone == 'unet':
         num_layers=resunet_config.num_layers, 
         embed_dim=resunet_config.embed_dim,
     ).to(device)
+    model = torch.compile(model)
 # elif args.backbone == 'vit':
     # idk
 else:
