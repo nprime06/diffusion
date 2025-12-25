@@ -4,4 +4,3 @@ torch
 pyyaml
 matplotlib
 pillow
-time
