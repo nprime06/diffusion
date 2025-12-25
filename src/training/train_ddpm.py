@@ -1,6 +1,7 @@
 import torch
 import torch.optim as optim
 import os
+import time
 from methods.ddpm.loss import loss
 from methods.ddpm.sampler import sample
 from run_io import save_checkpoint, flush_losses, save_samples_gif
@@ -27,6 +28,7 @@ def train_ddpm(model, dataloader, scheduler, train_config, device, images_mean, 
     step = 0
     while step < train_config.max_steps:
         for images, labels in dataloader:
+            t0 = time.time()
             images, labels = images.to(device).reshape(-1, 1, 28, 28), labels.to(device)
             loss_val = loss(model, images, scheduler)
 
@@ -34,8 +36,11 @@ def train_ddpm(model, dataloader, scheduler, train_config, device, images_mean, 
             loss_val.backward()
             optimizer.step()
 
+            if device == "cuda":
+                torch.cuda.synchronize()
+            t1 = time.time()
             loss_item = float(loss_val.item())
-            loss_buffer.append({"step": step, "loss": loss_item, "lr": optimizer.param_groups[0]["lr"]})
+            loss_buffer.append({"step": step, "loss": loss_item, "lr": optimizer.param_groups[0]["lr"], "time": f"{1000 * (t1 - t0):.2f}ms"})
 
             if step % train_config.checkpoint_every == 0:
                 save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, scheduler, device, images_mean, images_std)

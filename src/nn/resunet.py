@@ -1,11 +1,14 @@
+import torch
 import torch.nn as nn
 from embedding import TimeEmbedding
 from nn.resblock import ResBlock, DownResBlock, UpResBlock
 
 class ResUNet(nn.Module):
-    def __init__(self, in_channels, hidden_channels, num_layers, embed_dim): # layers > 0 is number of up/down
+    def __init__(self, in_channels, hidden_channels, num_layers, embed_dim, num_classes=0): # layers > 0 is number of up/down
         super().__init__()
         self.time_embedding = TimeEmbedding(embed_dim=embed_dim)
+        self.class_embedding = nn.Embedding(num_classes+1, embed_dim) if num_classes > 0 else None 
+        # num_classes=0 means no classes, c and c_emb are None
 
         # down: 1 -> h, h -> 2h, ... 2**(num_layers - 2)h -> 2**(num_layers - 1)h
         down_blocks_list = [DownResBlock(in_channels, hidden_channels, embed_dim)]
@@ -37,14 +40,21 @@ class ResUNet(nn.Module):
 
         self.out_conv = nn.Conv2d(hidden_channels, in_channels, kernel_size=1)
 
-    def forward(self, x, t): # x: (B, C, H, W), t: (B,)
-        t_emb = self.time_embedding(t)
+    def forward(self, x, t, c=None): # x: (B, C, H, W), t: (B,), c: (B,)
+        t_emb = self.time_embedding(t) # (B, embed_dim)
+        if self.class_embedding is not None:
+            if c is None:
+                c = torch.zeros_like(t, device=x.device) # if c is none, will use class 0 (unconditional)
+            c_emb = self.class_embedding(c) # (B, embed_dim)
+        else:
+            c_emb = None
+        
         skip_connections = []
         for down_block in self.down_blocks:
-            x, skip = down_block(x, t_emb)
+            x, skip = down_block(x, t_emb, c_emb)
             skip_connections.append(skip)
-        x = self.bot(x, t_emb)
+        x = self.bot(x, t_emb, c_emb)
         for up_block in self.up_blocks:
-            x = up_block(x, skip_connections.pop(), t_emb)
+            x = up_block(x, skip_connections.pop(), t_emb, c_emb)
         x = self.out_conv(x)
         return x

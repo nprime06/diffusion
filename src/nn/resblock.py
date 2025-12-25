@@ -18,11 +18,15 @@ class ResBlock(nn.Module): # expects time conditioning, need to change adaGN for
             self.skip_conv = nn.Identity()
 
         self.time_proj = nn.Linear(embed_dim, fan_out * 2)
+        self.class_proj = nn.Linear(embed_dim, fan_out * 2)
 
-    def forward(self, x, t_emb): # t_emb is (B, embed_dim)
+    def forward(self, x, t_emb, c_emb): # t_emb, c_emb are (B, embed_dim)
         res = self.skip_conv(x)
         x = self.gn2(self.conv1(self.act1(self.gn1(x))))
         scale, shift = self.time_proj(t_emb).unsqueeze(-1).unsqueeze(-1).chunk(2, dim=1)
+        if c_emb is not None: # if we have class conditioning
+            class_scale, class_shift = self.class_proj(c_emb).unsqueeze(-1).unsqueeze(-1).chunk(2, dim=1)
+            scale, shift = scale + class_scale, shift + class_shift
         x = x * (scale + 1) + shift
         x = self.conv2(self.act2(x))
         x = x + res
@@ -35,8 +39,8 @@ class DownResBlock(nn.Module):
         self.res = ResBlock(fan_in, fan_out, embed_dim)
         self.down = nn.Conv2d(fan_out, fan_out, kernel_size=4, stride=2, padding=1)
 
-    def forward(self, x, t_emb):
-        x = self.res(x, t_emb)
+    def forward(self, x, t_emb, c_emb):
+        x = self.res(x, t_emb, c_emb)
         skip = x
         x = self.down(x)
         return x, skip
@@ -47,8 +51,8 @@ class UpResBlock(nn.Module):
         self.up = nn.ConvTranspose2d(fan_in, fan_out, kernel_size=4, stride=2, padding=1)
         self.res = ResBlock(fan_out * 2, fan_out, embed_dim)
 
-    def forward(self, x, skip, t_emb):
+    def forward(self, x, skip, t_emb, c_emb):
         x = self.up(x)
         x = torch.cat([x, skip], dim=1)
-        x = self.res(x, t_emb)
+        x = self.res(x, t_emb, c_emb)
         return x
