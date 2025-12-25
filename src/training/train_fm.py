@@ -21,7 +21,7 @@ def save_logs(run_dir, loss_buffer, step, model, optimizer, fm_config, device, i
     return
 
 def train_fm(model, dataloader, fm_config, train_config, device, images_mean, images_std): # dataloader on cpu; model on device
-    optimizer = optim.Adam(model.parameters(), lr=train_config.learning_rate)
+    optimizer = optim.AdamW(model.parameters(), lr=train_config.learning_rate, weight_decay=train_config.weight_decay)
     loss_buffer = []
 
     step = 0

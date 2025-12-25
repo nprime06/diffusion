@@ -22,7 +22,7 @@ def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, device, i
     return
 
 def train_ddpm(model, dataloader, scheduler, train_config, device, images_mean, images_std): # scheduler, dataloader on cpu; model on device
-    optimizer = optim.Adam(model.parameters(), lr=train_config.learning_rate)
+    optimizer = optim.AdamW(model.parameters(), lr=train_config.learning_rate, weight_decay=train_config.weight_decay)
     loss_buffer = []
 
     step = 0
