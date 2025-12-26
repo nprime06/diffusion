@@ -22,9 +22,16 @@ def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, device, i
     return
 
 def train_ddpm(model, dataloader, scheduler, train_config, device, images_mean, images_std): # scheduler, dataloader on cpu; model on device
-    optimizer = optim.AdamW(model.parameters(), lr=train_config.learning_rate, weight_decay=train_config.weight_decay)
-    loss_buffer = []
+    params_list = [p for p in model.parameters() if p.requires_grad]
+    decay_params = [p for p in params_list if p.dim() >= 2]
+    nodecay_params = [p for p in params_list if p.dim() < 2]
+    optim_groups = [
+        {'params': decay_params, 'weight_decay': train_config.weight_decay},
+        {'params': nodecay_params, 'weight_decay': 0.0}
+    ]
+    optimizer = optim.AdamW(optim_groups, lr=train_config.learning_rate, fused=True)
 
+    loss_buffer = []
     step = 0
     while step < train_config.max_steps:
         for images, labels in dataloader:
