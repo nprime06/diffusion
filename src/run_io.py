@@ -88,7 +88,7 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
                 transform=ax.transAxes,
                 ha="center",
                 va="bottom",
-                fontsize=10,
+                fontsize=20,
                 color="black",
                 bbox=bbox,
                 clip_on=False,
@@ -103,7 +103,7 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
                 transform=ax.transAxes,
                 ha="right",
                 va="center",
-                fontsize=10,
+                fontsize=20,
                 color="black",
                 bbox=bbox,
                 rotation=0,
@@ -112,11 +112,11 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
 
         fig.text( # cfg_scale label
             0.5,
-            0.905,
+            0.92,
             "cfg_scale",
             ha="center",
             va="bottom",
-            fontsize=12,
+            fontsize=24,
             color="black",
         )
         fig.text( # class label
@@ -125,13 +125,13 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
             "class",
             ha="left",
             va="center",
-            fontsize=12,
+            fontsize=24,
             color="black",
             rotation=90,
         )
 
-        fig.suptitle(f"train_step {int(step)} | t {int(t)}")
-        fig.tight_layout(rect=(0.08, 0.02, 0.98, 0.86))
+        fig.suptitle(f"train_step {int(step)} | t {int(t)}", fontsize=32)
+        fig.tight_layout(rect=(0.03, 0, 1, 0.94))
         fig.canvas.draw()
 
         w, h = fig.canvas.get_width_height()

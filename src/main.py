@@ -31,11 +31,13 @@ run_info = {
 class TrainConfig:
     learning_rate: float = 1e-3
     weight_decay: float = 1e-2
-    max_steps: int = 100
+    max_steps: int = 10000
     batch_size: int = 128
     cfg_proportion: float = 0.8
     run_dir: str = args.run_dir
-    checkpoint_every: int = 25 # steps
+    early_checkpoint_every: int = 200 # steps
+    num_early_checkpoints: int = 3
+    late_checkpoint_every: int = 2000 # steps
 
 train_config = TrainConfig()
 run_info["trainconfig"] = asdict(train_config)
