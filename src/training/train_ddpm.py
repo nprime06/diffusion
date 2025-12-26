@@ -45,9 +45,9 @@ def train_ddpm(model, dataloader, scheduler, train_config, device, images_mean, 
 
             if device == "cuda":
                 torch.cuda.synchronize()
-            t1 = time.time()
-            loss_item = float(loss_val.item())
-            loss_buffer.append({"step": step, "loss": loss_item, "lr": optimizer.param_groups[0]["lr"], "time": f"{1000 * (t1 - t0):.2f}ms"})
+                t1 = time.time()
+                loss_item = float(loss_val.item())
+                loss_buffer.append({"step": step, "loss": loss_item, "lr": optimizer.param_groups[0]["lr"], "time": f"{1000 * (t1 - t0):.2f}ms"})
 
             if step % train_config.checkpoint_every == 0:
                 save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, scheduler, device, images_mean, images_std)

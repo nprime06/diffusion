@@ -111,7 +111,6 @@ run_info["param_count"] = int(param_count)
 write_run_yaml(args.run_dir, run_info)
 
 if args.method == 'ddpm':
-    print(device)
     trained_model = train_ddpm(model, dataloader, scheduler, train_config, device, images_mean, images_std)
 elif args.method == 'fm':
     trained_model = train_fm(model, dataloader, fm_config, train_config, device, images_mean, images_std)
