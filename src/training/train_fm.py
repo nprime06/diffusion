@@ -39,7 +39,7 @@ def train_fm(model, dataloader, fm_config, train_config, device, images_mean, im
         for images, labels in dataloader:
             t0 = time.time()
             images, labels = images.to(device).reshape(-1, 1, 28, 28), labels.to(device)
-            loss_val = loss(model, images)
+            loss_val = loss(model, images, labels, train_config.cfg_proportion)
 
             optimizer.zero_grad()
             loss_val.backward()
