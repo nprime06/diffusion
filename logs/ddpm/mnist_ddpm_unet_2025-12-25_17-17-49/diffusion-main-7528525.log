@@ -1,0 +1,7 @@
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: numpy in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from -r /home/willzhao/diffusion/requirements.txt (line 1)) (1.26.4)
+Requirement already satisfied: idx2numpy in /orcd/home/002/willzhao/.local/lib/python3.10/site-packages (from -r /home/willzhao/diffusion/requirements.txt (line 2)) (1.2.3)
+Requirement already satisfied: torch in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from -r /home/willzhao/diffusion/requirements.txt (line 3)) (2.5.1)
+Requirement already satisfied: pyyaml in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from -r /home/willzhao/diffusion/requirements.txt (line 4)) (6.0.2)
+Requirement already satisfied: matplotlib in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from -r /home/willzhao/diffusion/requirements.txt (line 5)) (3.9.3)
+Requirement already satisfied: pillow in /orcd/software/core/001/pkg/miniforge/24.3.0-0/lib/python3.10/site-packages (from -r /home/willzhao/diffusion/requirements.txt (line 6)) (11.0.0)

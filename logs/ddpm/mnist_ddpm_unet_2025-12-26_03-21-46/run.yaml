@@ -1,0 +1,24 @@
+dataset: mnist
+method: ddpm
+backbone: unet
+device: cuda
+trainconfig:
+  learning_rate: 0.001
+  weight_decay: 0.01
+  max_steps: 10000
+  batch_size: 128
+  cfg_proportion: 0.8
+  run_dir: /home/willzhao/diffusion/logs/ddpm/mnist_ddpm_unet_2025-12-26_03-21-46
+  early_checkpoint_every: 200
+  num_early_checkpoints: 3
+  late_checkpoint_every: 2000
+ddpmconfig:
+  beta_start: 0.0001
+  beta_end: 0.02
+  num_steps: 1000
+resunetconfig:
+  in_channels: 1
+  hidden_channels: 64
+  num_layers: 2
+  embed_dim: 64
+param_count: 2936131
