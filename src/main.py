@@ -18,7 +18,7 @@ from training.train_fm import train_fm
 from run_io import write_run_yaml
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-torch.set_float32_matmul_precision('high')
+# torch.set_float32_matmul_precision('high')
 
 run_info = {
     "dataset": args.dataset,
@@ -104,7 +104,7 @@ if args.backbone == 'unet':
         embed_dim=resunet_config.embed_dim,
         num_classes=num_classes,
     ).to(device)
-    model = torch.compile(model)
+    # model = torch.compile(model)
 # elif args.backbone == 'vit':
     # idk
 else:
