@@ -44,7 +44,7 @@ class ResUNet(nn.Module):
         t_emb = self.time_embedding(t) # (B, embed_dim)
         if self.class_embedding is not None:
             if c is None:
-                c = torch.zeros_like(t, device=x.device) # if c is none, will use class 0 (unconditional)
+                c = torch.zeros_like(t, dtype=torch.long, device=x.device) # if c is none, will use class 0 (unconditional)
             c_emb = self.class_embedding(c) # (B, embed_dim)
         else:
             c_emb = None

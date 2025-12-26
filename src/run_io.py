@@ -81,7 +81,7 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
 
         for j in range(cols):
             ax = axes[j]
-            ax.text(
+            ax.text( # cfg_scale label
                 0.5,
                 1.03,
                 col_labels[j],
@@ -96,7 +96,7 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
 
         for r in range(rows):
             ax = axes[r * cols]
-            ax.text(
+            ax.text( # class label
                 -0.03,
                 0.5,
                 row_labels[r],
@@ -110,7 +110,7 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
                 clip_on=False,
             )
 
-        fig.text(
+        fig.text( # cfg_scale label
             0.5,
             0.905,
             "cfg_scale",
@@ -119,7 +119,7 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
             fontsize=12,
             color="black",
         )
-        fig.text(
+        fig.text( # class label
             0.02,
             0.5,
             "class",
