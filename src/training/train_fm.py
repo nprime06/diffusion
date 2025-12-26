@@ -5,7 +5,7 @@ from methods.fm.loss import loss
 from methods.fm.sampler import sample
 from run_io import save_checkpoint, flush_losses, save_samples_gif
 
-def save_logs(run_dir, loss_buffer, step, model, optimizer, fm_config, device, images_mean, images_std, num_samples=16):
+def save_logs(run_dir, loss_buffer, step, model, optimizer, fm_config, device, images_mean, images_std, num_samples=100):
     loss_path = os.path.join(run_dir, "metrics", "loss.jsonl")
     checkpoint_dir = os.path.join(run_dir, "checkpoints")
     samples_dir = os.path.join(run_dir, "samples")
@@ -14,7 +14,9 @@ def save_logs(run_dir, loss_buffer, step, model, optimizer, fm_config, device, i
     save_checkpoint(checkpoint_dir, step, model, optimizer)
 
     x0 = torch.randn(num_samples, 1, 28, 28, device=device)
-    samples = sample(model, x0, fm_config) # history list from x0 to xT; (T, N, 1, 28, 28)
+    c = torch.arange(10, device=device, dtype=torch.long).repeat_interleave(10) + 1
+    cfg_scale = torch.arange(10, device=device, dtype=torch.float).repeat(10) # samples will have rows c = 0, 1, ..., 9, and cols cfg_scale = 0, 1, ..., 9
+    samples = sample(model, x0, c, cfg_scale, fm_config) # history list from x0 to xT; (T, N, 1, 28, 28)
     samples = (samples * images_std.to(device).reshape(1, 1, 1, 28, 28)) + images_mean.to(device).reshape(1, 1, 1, 28, 28)
     save_samples_gif(samples_dir, step, samples)
 

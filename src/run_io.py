@@ -51,8 +51,8 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
     rows = int(math.floor(math.sqrt(N)))
     cols = int(math.ceil(N / rows))
 
-    row_labels = [f"{i}" for i in range(10)]
-    col_labels = [f"{i:.1f}" for i in range(10)]
+    row_labels = [f"{i}" for i in range(cols)]
+    col_labels = [f"{i:.1f}" for i in range(rows)]
 
     # Pick up to max_frames timesteps, evenly spaced, always including the final frame.
     K = int(min(max_frames, T))
@@ -110,25 +110,26 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
                 clip_on=False,
             )
 
-        fig.text( # cfg_scale label
-            0.5,
-            0.92,
-            "cfg_scale",
-            ha="center",
-            va="bottom",
-            fontsize=24,
-            color="black",
-        )
-        fig.text( # class label
-            0.02,
-            0.5,
-            "class",
-            ha="left",
-            va="center",
-            fontsize=24,
-            color="black",
-            rotation=90,
-        )
+        if rows == 10 and cols == 10: # assume mnist
+            fig.text( # cfg_scale label
+                0.5,
+                0.92,
+                "cfg_scale",
+                ha="center",
+                va="bottom",
+                fontsize=24,
+                color="black",
+            )
+            fig.text( # class label
+                0.02,
+                0.5,
+                "class",
+                ha="left",
+                va="center",
+                fontsize=24,
+                color="black",
+                rotation=90,
+            )
 
         fig.suptitle(f"train_step {int(step)} | t {int(t)}", fontsize=32)
         fig.tight_layout(rect=(0.03, 0, 1, 0.94))
