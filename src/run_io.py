@@ -51,6 +51,9 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
     rows = int(math.floor(math.sqrt(N)))
     cols = int(math.ceil(N / rows))
 
+    row_labels = [f"{i}" for i in range(10)]
+    col_labels = [f"{i:.1f}" for i in range(10)]
+
     # Pick up to max_frames timesteps, evenly spaced, always including the final frame.
     K = int(min(max_frames, T))
     if K <= 1:
@@ -63,6 +66,8 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
     durations_ms = [duration_ms] * K
     durations_ms[-1] = int(round(linger_final_s * 1000.0))
 
+    bbox = dict(facecolor="white", alpha=0.85, edgecolor="none", pad=1.5) # for labels
+
     frames = []
     for t in frame_idxs:
         fig, axes = plt.subplots(rows, cols, figsize=(cols * 2.0, rows * 2.0))
@@ -74,8 +79,59 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
             x = samples_numpy[t, i, 0, :, :]  # (H,W)
             ax.imshow(x, cmap="gray")
 
-        fig.suptitle("step " + str(t))
-        fig.tight_layout()
+        for j in range(cols):
+            ax = axes[j]
+            ax.text(
+                0.5,
+                1.03,
+                col_labels[j],
+                transform=ax.transAxes,
+                ha="center",
+                va="bottom",
+                fontsize=10,
+                color="black",
+                bbox=bbox,
+                clip_on=False,
+            )
+
+        for r in range(rows):
+            ax = axes[r * cols]
+            ax.text(
+                -0.03,
+                0.5,
+                row_labels[r],
+                transform=ax.transAxes,
+                ha="right",
+                va="center",
+                fontsize=10,
+                color="black",
+                bbox=bbox,
+                rotation=0,
+                clip_on=False,
+            )
+
+        fig.text(
+            0.5,
+            0.905,
+            "cfg_scale",
+            ha="center",
+            va="bottom",
+            fontsize=12,
+            color="black",
+        )
+        fig.text(
+            0.02,
+            0.5,
+            "class",
+            ha="left",
+            va="center",
+            fontsize=12,
+            color="black",
+            rotation=90,
+        )
+
+        fig.suptitle(f"train_step {int(step)} | t {int(t)}")
+        fig.tight_layout(rect=(0.08, 0.02, 0.98, 0.86))
         fig.canvas.draw()
 
         w, h = fig.canvas.get_width_height()

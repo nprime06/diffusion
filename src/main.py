@@ -33,6 +33,7 @@ class TrainConfig:
     weight_decay: float = 1e-2
     max_steps: int = 100
     batch_size: int = 128
+    cfg_proportion: float = 0.8
     run_dir: str = args.run_dir
     checkpoint_every: int = 25 # steps
 
@@ -53,6 +54,7 @@ if args.dataset == 'mnist':
         shuffle=True,
         drop_last=True,
     )
+    num_classes = 10
 # elif args.dataset == 'cifar10':
     # idk
 else:
@@ -98,6 +100,7 @@ if args.backbone == 'unet':
         hidden_channels=resunet_config.hidden_channels, 
         num_layers=resunet_config.num_layers, 
         embed_dim=resunet_config.embed_dim,
+        num_classes=num_classes,
     ).to(device)
     model = torch.compile(model)
 # elif args.backbone == 'vit':
