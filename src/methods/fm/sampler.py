@@ -4,16 +4,18 @@ def euler_step(x, v, num_steps): # x: (B, C, H, W), v: (B, C, H, W), num_steps: 
     step_size = torch.full((x.shape[0], 1, 1, 1), 1.0 / num_steps, dtype=x.dtype, device=x.device)
     return x + step_size * v
 
-def sample(model, x0, fm_config): # x0: (B, C, H, W)
+def sample(model, x0, c, cfg_scale, fm_config): # x0: (B, C, H, W), c: (B,), cfg_scale: (B,)
     x = x0.clone()
     history = [x]
     for t in range(fm_config.num_steps):
         t_batch = torch.full((x.shape[0],), 1.0 * t / fm_config.num_steps, dtype=x.dtype, device=x.device)
         with torch.no_grad():
-            v = model(x, t_batch)
+            pred_v_cond = model(x, t_batch, c)
+            pred_v_uncond = model(x, t_batch, None)
+            pred_v = pred_v_uncond + cfg_scale.view(-1, 1, 1, 1) * (pred_v_cond - pred_v_uncond)
 
         if fm_config.sampler == 'euler':
-            x = euler_step(x, v, fm_config.num_steps)
+            x = euler_step(x, pred_v, fm_config.num_steps)
         else:
             raise ValueError(f"Unsupported sampler: {fm_config.sampler}")
 
