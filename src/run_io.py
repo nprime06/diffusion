@@ -41,7 +41,7 @@ def save_checkpoint(checkpoint_dir, step, model, optimizer):
     )
     return
 
-def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s=0.1, linger_final_s=2.0):
+def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s=0.1, linger_final_s=2.0, local=False):
     filename = f"step_{int(step):08d}.gif"
     path = os.path.join(samples_dir, filename)
 
@@ -135,7 +135,11 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
         fig.canvas.draw()
 
         w, h = fig.canvas.get_width_height()
-        img = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8).reshape(h, w, 3)
+        if local:
+            argb = np.frombuffer(fig.canvas.tostring_argb(), dtype=np.uint8).reshape(h, w, 4)
+            img = argb[..., 1:4].copy()
+        else:
+            img = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8).reshape(h, w, 3)
         frames.append(Image.fromarray(img))
         plt.close(fig)
 

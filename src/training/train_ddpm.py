@@ -15,7 +15,7 @@ def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, device, i
     save_checkpoint(checkpoint_dir, step, model, optimizer)
 
     xT = torch.randn(num_samples, 1, 28, 28, device=device)
-    c = torch.arange(10, device=device, dtype=torch.long).repeat_interleave(10)
+    c = torch.arange(10, device=device, dtype=torch.long).repeat_interleave(10) + 1
     cfg_scale = torch.arange(10, device=device, dtype=torch.float).repeat(10) # samples will have rows c = 0, 1, ..., 9, and cols cfg_scale = 0, 1, ..., 9
     samples = sample(model, xT, c, cfg_scale, scheduler) # history list from xT to x0; (T, N, 1, 28, 28)
     samples = (samples * images_std.to(device).reshape(1, 1, 1, 28, 28)) + images_mean.to(device).reshape(1, 1, 1, 28, 28)

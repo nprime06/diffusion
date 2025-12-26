@@ -87,7 +87,6 @@ cover/
 *.pot
 
 # Django stuff:
-*.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -246,4 +245,8 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+
+# secret file structure :(
 scripts/
+new_gif.py
+plot_loss.py

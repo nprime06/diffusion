@@ -1,12 +1,49 @@
 import numpy as np
-import idx2numpy as idx
 import torch
-import torchvision.transforms as transforms
 from torch.utils.data import Dataset
+import struct
+
+
+_IDX_DTYPE_MAP = {
+    0x08: np.uint8,
+    0x09: np.int8,
+    0x0B: np.int16,
+    0x0C: np.int32,
+    0x0D: np.float32,
+    0x0E: np.float64,
+}
+
+
+def read_idx(path: str) -> np.ndarray:
+    """
+    Read an IDX file (e.g. MNIST .idx3-ubyte / .idx1-ubyte) into a numpy array.
+    Spec: http://yann.lecun.com/exdb/mnist/
+    """
+    with open(path, "rb") as f:
+        header = f.read(4)
+        if len(header) != 4:
+            raise ValueError(f"Invalid IDX file (too short): {path}")
+
+        zero0, zero1, dtype_code, ndim = struct.unpack(">BBBB", header)
+        if zero0 != 0 or zero1 != 0:
+            raise ValueError(f"Invalid IDX magic (missing leading zeros): {path}")
+        if dtype_code not in _IDX_DTYPE_MAP:
+            raise ValueError(f"Unsupported IDX dtype code 0x{dtype_code:02x} in {path}")
+        if ndim <= 0:
+            raise ValueError(f"Invalid IDX ndim={ndim} in {path}")
+
+        shape = struct.unpack(">" + "I" * ndim, f.read(4 * ndim))
+        data = f.read()
+
+    arr = np.frombuffer(data, dtype=_IDX_DTYPE_MAP[dtype_code])
+    expected = int(np.prod(shape))
+    if arr.size != expected:
+        raise ValueError(f"IDX size mismatch in {path}: expected {expected}, got {arr.size}")
+    return arr.reshape(shape)
 
 def load_mnist_images_labels(image_path, label_path, ):
-    images = torch.from_numpy(idx.convert_from_file(open(image_path, 'rb')).copy()).float() # copy to avoid modifying the original data
-    labels = torch.from_numpy(idx.convert_from_file(open(label_path, 'rb')).copy()).long()
+    images = torch.from_numpy(read_idx(image_path).copy()).float()  # copy to avoid modifying the original data
+    labels = torch.from_numpy(read_idx(label_path).copy()).long()
     return images, labels
 
 class MNISTDataloader(Dataset): # everything is on cpu
