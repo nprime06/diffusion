@@ -4,7 +4,7 @@ from embedding import TimeEmbedding
 from nn.resblock import ResBlock, DownResBlock, UpResBlock
 
 class ResUNet(nn.Module):
-    def __init__(self, in_channels, hidden_channels, num_layers, embed_dim, num_classes=0): # layers > 0 is number of up/down
+    def __init__(self, in_channels, hidden_channels, num_layers, embed_dim, out_channels=None, num_classes=0): # layers > 0 is number of up/down
         super().__init__()
         self.time_embedding = TimeEmbedding(embed_dim=embed_dim)
         self.class_embedding = nn.Embedding(num_classes+1, embed_dim) if num_classes > 0 else None 
@@ -37,8 +37,9 @@ class ResUNet(nn.Module):
             up_blocks_list.append(ResBlock(hidden_channels * 2**(i + 1), hidden_channels * 2**i, embed_dim))
         self.up_blocks = nn.ModuleList(up_blocks_list)
         '''
-
-        self.out_conv = nn.Conv2d(hidden_channels, in_channels, kernel_size=1)
+        if out_channels is None:
+            out_channels = in_channels
+        self.out_conv = nn.Conv2d(hidden_channels, out_channels, kernel_size=1)
 
     def forward(self, x, t, c=None): # x: (B, C, H, W), t: (B,), c: (B,)
         t_emb = self.time_embedding(t) # (B, embed_dim)
