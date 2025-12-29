@@ -41,12 +41,14 @@ def save_checkpoint(checkpoint_dir, step, model, optimizer):
     )
     return
 
-def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s=0.1, linger_final_s=2.0, local=False):
+def save_samples_gif(samples_dir, step, samples, max_frames=50, total_length_s=5.0, linger_final_s=2.0, local=False):
     filename = f"step_{int(step):08d}.gif"
     path = os.path.join(samples_dir, filename)
 
     samples_numpy = samples.detach().float().cpu().numpy()
     T, N, _, _, _ = samples_numpy.shape
+    if T <= 0:
+        raise ValueError(f"Expected samples with T>0, got T={T}.")
 
     rows = int(math.floor(math.sqrt(N)))
     cols = int(math.ceil(N / rows))
@@ -62,9 +64,11 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, frame_duration_s
         frame_idxs = np.linspace(0, T - 1, num=K, dtype=int)
         frame_idxs[-1] = T - 1
 
-    duration_ms = int(round(frame_duration_s * 1000.0))
-    durations_ms = [duration_ms] * K
-    durations_ms[-1] = int(round(linger_final_s * 1000.0))
+    # Make the non-linger portion last a fixed amount of time, even when we have
+    # fewer than max_frames frames available.
+    base_duration_ms = int(round((float(total_length_s) / max(K, 1)) * 1000.0))
+    durations_ms = [base_duration_ms] * K
+    durations_ms[-1] += int(round(float(linger_final_s) * 1000.0))
 
     bbox = dict(facecolor="white", alpha=0.85, edgecolor="none", pad=1.5) # for labels
 
