@@ -1,0 +1,24 @@
+dataset: cifar10
+method: ddpm
+backbone: unet
+device: cuda
+trainconfig:
+  learning_rate: 0.001
+  weight_decay: 0.01
+  max_steps: 100000
+  batch_size: 128
+  cfg_proportion: 0.8
+  run_dir: /home/willzhao/diffusion/logs/ddpm/cifar10_ddpm_unet_2025-12-30_02-17-19
+  early_checkpoint_every: 500
+  num_early_checkpoints: 3
+  late_checkpoint_every: 25000
+ddpmconfig:
+  beta_start: 0.0001
+  beta_end: 0.02
+  num_steps: 1000
+resunetconfig:
+  in_channels: 3
+  hidden_channels: 128
+  num_layers: 3
+  embed_dim: 256
+param_count: 48842121
