@@ -10,7 +10,7 @@ args = parser.parse_args()
 from dataclasses import asdict, dataclass
 import torch
 from torch.utils.data import DataLoader
-from data import MNISTDataloader
+from data import MNISTDataloader, CIFAR10Dataloader
 from nn.resunet import ResUNet
 from methods.ddpm.schedule import DDPMScheduler
 from training.train_ddpm import train_ddpm
@@ -50,6 +50,7 @@ if args.dataset == 'mnist':
         test_labels_path='/home/willzhao/data/MNIST/test-labels.idx1-ubyte',
     )
     images_mean, images_std = dataset.get_mean_std()
+    image_shape = (1, 28, 28)
     dataloader = DataLoader(
         dataset,
         batch_size=train_config.batch_size,
@@ -57,8 +58,17 @@ if args.dataset == 'mnist':
         drop_last=True,
     )
     num_classes = 10
-# elif args.dataset == 'cifar10':
-    # idk
+elif args.dataset == 'cifar10':
+    dataset = CIFAR10Dataloader(root="/home/willzhao/data/CIFAR_10/")
+    images_mean, images_std = dataset.get_mean_std()
+    image_shape = (3, 32, 32)
+    dataloader = DataLoader(
+        dataset,
+        batch_size=train_config.batch_size,
+        shuffle=True,
+        drop_last=True,
+    )
+    num_classes = 10
 else:
     raise ValueError(f"Unsupported dataset: {args.dataset}")
 
@@ -116,8 +126,8 @@ run_info["param_count"] = int(param_count)
 write_run_yaml(args.run_dir, run_info)
 
 if args.method == 'ddpm':
-    trained_model = train_ddpm(model, dataloader, scheduler, train_config, device, images_mean, images_std)
+    trained_model = train_ddpm(model, dataloader, scheduler, train_config, device, image_shape, images_mean, images_std)
 elif args.method == 'fm':
-    trained_model = train_fm(model, dataloader, fm_config, train_config, device, images_mean, images_std)
+    trained_model = train_fm(model, dataloader, fm_config, train_config, device, image_shape, images_mean, images_std)
 else:
     raise ValueError(f"Unsupported method: {args.method}")

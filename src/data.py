@@ -1,7 +1,6 @@
 import numpy as np
 import idx2numpy as idx
 import torch
-import torchvision.transforms as transforms
 from torch.utils.data import Dataset
 
 def load_mnist_images_labels(image_path, label_path, ):
@@ -28,3 +27,34 @@ class MNISTDataloader(Dataset): # everything is on cpu
     
     def get_mean_std(self):
         return self.images_mean, self.images_std # (1, 28, 28), (1, 28, 28)
+
+
+class CIFAR10Dataloader(Dataset): # everything is on cpu
+    def __init__(self, root):
+        # Lazy import: if torchvision is mis-installed it can segfault at import time,
+        # so we avoid importing it unless CIFAR-10 is actually used.
+        from torchvision.datasets import CIFAR10
+
+        train_ds = CIFAR10(root=root, train=True, download=True)
+        train_images = torch.from_numpy(train_ds.data.copy()).permute(0, 3, 1, 2).float() / 255.0 # (N, 3, 32, 32)
+        train_labels = torch.tensor(train_ds.targets, dtype=torch.long) # (N,)
+
+        test_ds = CIFAR10(root=root, train=False, download=True)
+        test_images = torch.from_numpy(test_ds.data.copy()).permute(0, 3, 1, 2).float() / 255.0 # (N, 3, 32, 32)
+        test_labels = torch.tensor(test_ds.targets, dtype=torch.long) # (N,)
+
+        self.images = torch.cat((train_images, test_images), dim=0) # (N, 3, 32, 32)
+        self.labels = torch.cat((train_labels, test_labels), dim=0) # (N,)
+
+        self.images_mean = self.images.mean(dim=0, keepdim=True).float() # (1, 3, 32, 32)
+        self.images_std = self.images.std(dim=0, keepdim=True).float()   # (1, 3, 32, 32)
+        self.images = (self.images - self.images_mean) / (self.images_std + 1e-6).float()
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        return self.images[idx], self.labels[idx] # (3, 32, 32), (1,)
+
+    def get_mean_std(self):
+        return self.images_mean, self.images_std # (1, 3, 32, 32), (1, 3, 32, 32)

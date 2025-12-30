@@ -46,7 +46,7 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, total_length_s=5
     path = os.path.join(samples_dir, filename)
 
     samples_numpy = samples.detach().float().cpu().numpy()
-    T, N, _, _, _ = samples_numpy.shape
+    T, N, C, _, _ = samples_numpy.shape
     if T <= 0:
         raise ValueError(f"Expected samples with T>0, got T={T}.")
 
@@ -80,8 +80,15 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, total_length_s=5
             ax.axis("off")
             if i >= N:
                 continue
-            x = samples_numpy[t, i, 0, :, :]  # (H,W)
-            ax.imshow(x, cmap="gray")
+            # Support grayscale (C=1) and RGB (C=3) samples.
+            if C == 1:
+                x = samples_numpy[t, i, 0, :, :]  # (H,W)
+                ax.imshow(x, cmap="gray")
+            elif C == 3:
+                x = samples_numpy[t, i, :, :, :].transpose(1, 2, 0)  # (H,W,3)
+                ax.imshow(x)
+            else:
+                raise ValueError(f"Expected samples with C in {{1,3}}, got C={C}.")
 
         for j in range(cols):
             ax = axes[j]
@@ -114,7 +121,7 @@ def save_samples_gif(samples_dir, step, samples, max_frames=50, total_length_s=5
                 clip_on=False,
             )
 
-        if rows == 10 and cols == 10: # assume mnist
+        if rows == 10 and cols == 10: # assume num_classes = 10 and num_cfg_scales = 10
             fig.text( # cfg_scale label
                 0.5,
                 0.92,

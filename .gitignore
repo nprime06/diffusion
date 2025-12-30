@@ -256,3 +256,4 @@ __marimo__/
 scripts/
 new_gif.py
 plot_loss.py
+view_data.py

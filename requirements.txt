@@ -1,6 +1,7 @@
 numpy
 idx2numpy
 torch
+torchvision
 pyyaml
 matplotlib
 pillow
