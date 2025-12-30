@@ -29,13 +29,14 @@ run_info = {
 
 @dataclass
 class TrainConfig:
-    learning_rate: float = 1e-3
+    learning_rate: float = 3e-4
     weight_decay: float = 1e-2
+    grad_clip_norm: float = 1.0
     max_steps: int = 100000
-    batch_size: int = 128
+    batch_size: int = 1024
     cfg_proportion: float = 0.8
     run_dir: str = args.run_dir
-    early_checkpoint_every: int = 500 # steps
+    early_checkpoint_every: int = 1000 # steps
     num_early_checkpoints: int = 3
     late_checkpoint_every: int = 25000 # steps
 

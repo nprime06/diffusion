@@ -2,6 +2,7 @@ import torch
 import torch.optim as optim
 import os
 import time
+import math
 from methods.fm.loss import loss
 from methods.fm.sampler import sample
 from run_io import save_checkpoint, flush_losses, save_samples_gif
@@ -33,6 +34,15 @@ def train_fm(model, dataloader, fm_config, train_config, device, image_shape, im
     ]
     optimizer = optim.AdamW(optim_groups, lr=train_config.learning_rate, fused=True)
 
+    warmup_steps = int(0.05 * train_config.max_steps)
+    def lr_lambda(current_step):
+        if current_step < warmup_steps: return float(current_step + 1) / float(warmup_steps) # linear warmup
+        progress = float(current_step - warmup_steps) / float(train_config.max_steps - warmup_steps)
+        return 0.5 * (1.0 + math.cos(math.pi * progress)) # cosine decay
+
+    scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_lambda)
+    scheduler.step()
+
     loss_buffer = []
     step = 0
     while step < train_config.max_steps:
@@ -43,7 +53,9 @@ def train_fm(model, dataloader, fm_config, train_config, device, image_shape, im
 
             optimizer.zero_grad()
             loss_val.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=train_config.grad_clip_norm)
             optimizer.step()
+            scheduler.step()
 
             if device == "cuda":
                 torch.cuda.synchronize()

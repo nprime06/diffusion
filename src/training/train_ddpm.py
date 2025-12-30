@@ -2,17 +2,19 @@ import torch
 import torch.optim as optim
 import os
 import time
+import math
 from methods.ddpm.loss import loss
 from methods.ddpm.sampler import sample
 from run_io import save_checkpoint, flush_losses, save_samples_gif
 
-def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, device, image_shape, images_mean, images_std, num_samples=100):
+def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, device, image_shape, images_mean, images_std, num_samples=100, checkpoint=True):
     loss_path = os.path.join(run_dir, "metrics", "loss.jsonl")
     checkpoint_dir = os.path.join(run_dir, "checkpoints")
     samples_dir = os.path.join(run_dir, "samples")
 
     flush_losses(loss_path, loss_buffer)
-    save_checkpoint(checkpoint_dir, step, model, optimizer)
+    if checkpoint:
+        save_checkpoint(checkpoint_dir, step, model, optimizer)
 
     xT = torch.randn(num_samples, *image_shape, device=device)
     c = torch.arange(10, device=device, dtype=torch.long).repeat_interleave(10) + 1
@@ -33,6 +35,15 @@ def train_ddpm(model, dataloader, scheduler, train_config, device, image_shape, 
     ]
     optimizer = optim.AdamW(optim_groups, lr=train_config.learning_rate, fused=True)
 
+    warmup_steps = int(0.05 * train_config.max_steps)
+    def lr_lambda(current_step):
+        if current_step < warmup_steps: return float(current_step + 1) / float(warmup_steps) # linear warmup
+        progress = float(current_step - warmup_steps) / float(train_config.max_steps - warmup_steps)
+        return 0.5 * (1.0 + math.cos(math.pi * progress)) # cosine decay
+
+    scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_lambda)
+    scheduler.step()
+
     loss_buffer = []
     step = 0
     while step < train_config.max_steps:
@@ -43,7 +54,9 @@ def train_ddpm(model, dataloader, scheduler, train_config, device, image_shape, 
 
             optimizer.zero_grad()
             loss_val.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=train_config.grad_clip_norm)
             optimizer.step()
+            scheduler.step()
 
             if device == "cuda":
                 torch.cuda.synchronize()
@@ -52,7 +65,7 @@ def train_ddpm(model, dataloader, scheduler, train_config, device, image_shape, 
             loss_buffer.append({"step": step, "loss": loss_item, "lr": optimizer.param_groups[0]["lr"], "time": f"{1000 * (t1 - t0):.2f}ms"})
 
             if step % train_config.early_checkpoint_every == 0 and step < train_config.num_early_checkpoints * train_config.early_checkpoint_every:
-                save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, scheduler, device, image_shape, images_mean, images_std)
+                save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, scheduler, device, image_shape, images_mean, images_std, checkpoint=False)
             elif step % train_config.late_checkpoint_every == 0:
                 save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, scheduler, device, image_shape, images_mean, images_std)
                 
