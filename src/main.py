@@ -100,12 +100,13 @@ else:
 if args.backbone == 'unet':
     @dataclass
     class ResUNetConfig:
-        in_channels: int = 1
+        # If None, we infer this from the selected dataset's `image_shape`.
+        # (MNIST: 1, CIFAR-10: 3)
+        in_channels: int
         hidden_channels: int = 64
         num_layers: int = 2
         embed_dim: int = 64
-    
-    resunet_config = ResUNetConfig()
+    resunet_config = ResUNetConfig(in_channels=int(image_shape[0]))
     run_info["resunetconfig"] = asdict(resunet_config)
     model = ResUNet(
         in_channels=resunet_config.in_channels, 
