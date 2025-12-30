@@ -1,0 +1,24 @@
+dataset: cifar10
+method: fm
+backbone: unet
+device: cuda
+trainconfig:
+  learning_rate: 0.0003
+  weight_decay: 0.01
+  grad_clip_norm: 1.0
+  max_steps: 100000
+  batch_size: 1024
+  cfg_proportion: 0.8
+  run_dir: /home/willzhao/diffusion/logs/fm/cifar10_fm_unet_2025-12-30_13-49-06
+  early_checkpoint_every: 1000
+  num_early_checkpoints: 3
+  late_checkpoint_every: 25000
+fmconfig:
+  num_steps: 100
+  sampler: euler
+resunetconfig:
+  in_channels: 3
+  hidden_channels: 128
+  num_layers: 3
+  embed_dim: 256
+param_count: 48842121
