@@ -31,13 +31,13 @@ run_info = {
 class TrainConfig:
     learning_rate: float = 1e-3
     weight_decay: float = 1e-2
-    max_steps: int = 20000
+    max_steps: int = 100000
     batch_size: int = 128
     cfg_proportion: float = 0.8
     run_dir: str = args.run_dir
-    early_checkpoint_every: int = 200 # steps
+    early_checkpoint_every: int = 500 # steps
     num_early_checkpoints: int = 3
-    late_checkpoint_every: int = 5000 # steps
+    late_checkpoint_every: int = 25000 # steps
 
 train_config = TrainConfig()
 run_info["trainconfig"] = asdict(train_config)
@@ -103,9 +103,9 @@ if args.backbone == 'unet':
         # If None, we infer this from the selected dataset's `image_shape`.
         # (MNIST: 1, CIFAR-10: 3)
         in_channels: int
-        hidden_channels: int = 64
-        num_layers: int = 2
-        embed_dim: int = 64
+        hidden_channels: int = 128
+        num_layers: int = 3
+        embed_dim: int = 256
     resunet_config = ResUNetConfig(in_channels=int(image_shape[0]))
     run_info["resunetconfig"] = asdict(resunet_config)
     model = ResUNet(
