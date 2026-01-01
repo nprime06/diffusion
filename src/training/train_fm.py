@@ -19,8 +19,10 @@ def save_logs(run_dir, loss_buffer, step, model, optimizer, fm_config, device, i
         save_checkpoint(checkpoint_dir, step, model, optimizer)
 
     x0 = torch.randn(num_samples, *image_shape, device=device)
-    c = torch.arange(10, device=device, dtype=torch.long).repeat_interleave(10) + 1
-    cfg_scale = torch.arange(10, device=device, dtype=torch.float).repeat(10) # samples will have rows c = 0, 1, ..., 9, and cols cfg_scale = 0, 1, ..., 9
+    # c = torch.arange(10, device=device, dtype=torch.long).repeat_interleave(10) + 1
+    # cfg_scale = torch.arange(10, device=device, dtype=torch.float).repeat(10) # samples will have rows c = 0, 1, ..., 9, and cols cfg_scale = 0, 1, ..., 9
+    c = torch.zeros(num_samples, device=device, dtype=torch.long)
+    cfg_scale = torch.zeros(num_samples, device=device, dtype=torch.float)
     samples = sample(model, x0, c, cfg_scale, fm_config, vae) # history list from x0 to xT; (T, N, C, H, W)
     samples = (samples * images_std.to(device).reshape(1, 1, *image_shape)) + images_mean.to(device).reshape(1, 1, *image_shape)
     save_samples_gif(samples_dir, step, samples)

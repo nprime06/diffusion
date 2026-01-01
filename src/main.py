@@ -78,7 +78,7 @@ elif args.dataset == 'cifar10':
 elif args.dataset == 'afhq':
     dataset = AFHQDataloader(root="/home/willzhao/data/afhq")
     images_mean, images_std = dataset.get_mean_std()
-    image_shape = (3, 512, 512)
+    image_shape = (4, 64, 64) # latent shape
     in_channels = 4 # latent channels
     dataloader = DataLoader(
         dataset,
@@ -87,9 +87,7 @@ elif args.dataset == 'afhq':
         drop_last=True,
     )
     num_classes = 3
-    vae = get_vae()
-    vae.to(device)
-    vae = torch.compile(vae)
+    vae = get_vae(device=device)
     run_info["vae"] = "stabilityai/sd-vae-ft-mse"
 else:
     raise ValueError(f"Unsupported dataset: {args.dataset}")

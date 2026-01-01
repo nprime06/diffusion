@@ -19,16 +19,25 @@ def single_step(model, xt, t, c, cfg_scale, scheduler): # xt: (B, C, H, W), t: (
     return pred_mu + add_noise * torch.sqrt(beta) * z
 
 def sample(model, xT, c, cfg_scale, scheduler, vae): # xT: (B, C, H, W), c: (B,)
+    def _decode_latents(x_latents: torch.Tensor) -> torch.Tensor:
+        x_img = vae.decode(x_latents / SD_LATENT_SCALE).sample
+        x_img = (x_img + 1.0) / 2.0
+        return x_img
+
     x = xT.clone()
-    history = [x]
+    if vae is not None:
+        with torch.no_grad():
+            history = [_decode_latents(x)]
+    else:
+        history = [x]
+        
     for t in range(scheduler.num_steps, 0, -1): # all t is on cpu
         t_batch = torch.full((x.shape[0],), t, dtype=torch.long)
         x = single_step(model, x, t_batch, c, cfg_scale, scheduler) # c is (B,), dtype=torch.long, on same device as xT
 
         if vae is not None:
             with torch.no_grad():
-                x = vae.decode(x / SD_LATENT_SCALE).sample  # (B, 3, H, W)
-                x = (x + 1.0) / 2.0
-
-        history.append(x)
+                history.append(_decode_latents(x))
+        else:
+            history.append(x)
     return torch.stack(history)

@@ -7,8 +7,18 @@ def euler_step(x, v, num_steps): # x: (B, C, H, W), v: (B, C, H, W), num_steps: 
     return x + step_size * v
 
 def sample(model, x0, c, cfg_scale, fm_config, vae): # x0: (B, C, H, W), c: (B,), cfg_scale: (B,)
+    def _decode_latents(x_latents):
+        x_img = vae.decode(x_latents / SD_LATENT_SCALE).sample
+        x_img = (x_img + 1.0) / 2.0
+        return x_img
+
     x = x0.clone()
-    history = [x]
+    if vae is not None:
+        with torch.no_grad():
+            history = [_decode_latents(x)]
+    else:
+        history = [x]
+    
     for t in range(fm_config.num_steps):
         t_batch = torch.full((x.shape[0],), 1.0 * t / fm_config.num_steps, dtype=x.dtype, device=x.device)
         with torch.no_grad():
@@ -23,8 +33,7 @@ def sample(model, x0, c, cfg_scale, fm_config, vae): # x0: (B, C, H, W), c: (B,)
 
         if vae is not None:
             with torch.no_grad():
-                x = vae.decode(x / SD_LATENT_SCALE).sample  # (B, 3, H, W)
-                x = (x + 1.0) / 2.0
-
-        history.append(x)
+                history.append(_decode_latents(x))
+        else:
+            history.append(x)
     return torch.stack(history)
