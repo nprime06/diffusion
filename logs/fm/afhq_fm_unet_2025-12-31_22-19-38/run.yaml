@@ -1,0 +1,25 @@
+dataset: afhq
+method: fm
+backbone: unet
+device: cuda
+trainconfig:
+  learning_rate: 0.0003
+  weight_decay: 0.01
+  grad_clip_norm: 1.0
+  max_steps: 1000
+  batch_size: 128
+  cfg_proportion: 0.8
+  run_dir: /home/willzhao/diffusion/logs/fm/afhq_fm_unet_2025-12-31_22-19-38
+  early_checkpoint_every: 500
+  num_early_checkpoints: 3
+  late_checkpoint_every: 25000
+vae: stabilityai/sd-vae-ft-mse
+fmconfig:
+  num_steps: 100
+  sampler: euler
+resunetconfig:
+  in_channels: 4
+  hidden_channels: 256
+  num_layers: 3
+  embed_dim: 256
+param_count: 189481740
