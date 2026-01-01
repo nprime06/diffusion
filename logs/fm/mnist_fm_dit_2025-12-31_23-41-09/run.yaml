@@ -1,0 +1,30 @@
+dataset: mnist
+method: fm
+backbone: dit
+device: cuda
+trainconfig:
+  learning_rate: 0.0003
+  weight_decay: 0.01
+  grad_clip_norm: 1.0
+  max_steps: 1000
+  batch_size: 128
+  cfg_proportion: 0.8
+  run_dir: /home/willzhao/diffusion/logs/fm/mnist_fm_dit_2025-12-31_23-41-09
+  early_checkpoint_every: 500
+  num_early_checkpoints: 3
+  late_checkpoint_every: 25000
+fmconfig:
+  num_steps: 100
+  sampler: euler
+ditconfig:
+  image_shape:
+  - 1
+  - 28
+  - 28
+  d_model: 256
+  d_embed: 128
+  heads: 8
+  num_layers: 6
+  p: 4
+  cross_attn: false
+param_count: 5960720
