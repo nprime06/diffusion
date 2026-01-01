@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 class TimeEmbedding(nn.Module): 
-    def __init__(self, embed_dim, embed_size=64, max_freq = 2, min_freq = 0): # freq is log scale
+    def __init__(self, embed_dim, embed_size=128, max_freq = 2, min_freq = 0): # freq is log scale
         super().__init__()
         powers_base = 2 * torch.pi * torch.logspace(min_freq, max_freq, steps=embed_size // 2, base=10).unsqueeze(0)
         self.register_buffer("powers_base", powers_base) # so that checkpoints save 

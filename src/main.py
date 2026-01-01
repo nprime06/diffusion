@@ -12,6 +12,7 @@ import torch
 from torch.utils.data import DataLoader
 from data import MNISTDataloader, CIFAR10Dataloader, AFHQDataloader
 from nn.resunet import ResUNet
+from nn.dit import DiT
 from nn.sdvae import get_vae
 from methods.ddpm.schedule import DDPMScheduler
 from training.train_ddpm import train_ddpm
@@ -136,8 +137,30 @@ if args.backbone == 'unet':
         num_classes=num_classes,
     ).to(device)
     model = torch.compile(model)
-# elif args.backbone == 'vit':
-    # idk
+elif args.backbone == 'dit':
+    # d_model, d_embed, heads, num_layers, image_shape, p, num_classes=0, cross_attn=False)
+    @dataclass
+    class DiTConfig:
+        image_shape: tuple[int, int, int]
+        d_model: int = 256
+        d_embed: int = 128
+        heads: int = 8
+        num_layers: int = 6
+        p: int = 4
+        cross_attn: bool = False
+    dit_config = DiTConfig(image_shape=image_shape)
+    run_info["ditconfig"] = asdict(dit_config)
+    model = DiT(
+        d_model=dit_config.d_model,
+        d_embed=dit_config.d_embed,
+        heads=dit_config.heads,
+        num_layers=dit_config.num_layers,
+        image_shape=dit_config.image_shape,
+        p=dit_config.p,
+        num_classes=num_classes,
+        cross_attn=dit_config.cross_attn,
+    ).to(device)
+    model = torch.compile(model)
 else:
     raise ValueError(f"Unsupported backbone: {args.backbone}")
 
