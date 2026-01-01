@@ -79,7 +79,8 @@ elif args.dataset == 'cifar10':
 elif args.dataset == 'afhq':
     dataset = AFHQDataloader(root="/home/willzhao/data/afhq")
     images_mean, images_std = dataset.get_mean_std()
-    image_shape = (4, 64, 64) # latent shape
+    # Dataloader returns RGB images; we VAE-encode inside the training loop.
+    image_shape = (3, 512, 512)
     in_channels = 4 # latent channels
     dataloader = DataLoader(
         dataset,
@@ -90,6 +91,7 @@ elif args.dataset == 'afhq':
     num_classes = 3
     vae = get_vae(device=device)
     run_info["vae"] = "stabilityai/sd-vae-ft-mse"
+    run_info["latent_shape"] = (4, 64, 64)
 else:
     raise ValueError(f"Unsupported dataset: {args.dataset}")
 

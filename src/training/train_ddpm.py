@@ -18,7 +18,16 @@ def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, device, i
     if checkpoint:
         save_checkpoint(checkpoint_dir, step, model, optimizer)
 
-    xT = torch.randn(num_samples, *image_shape, device=device)
+    if vae is not None:
+        # Sample in latent space (model state), but sampler will decode for the returned history.
+        with torch.no_grad():
+            dummy = torch.zeros(1, *image_shape, device=device, dtype=torch.float32)
+            dummy = (dummy * 2.0 - 1.0).clamp(-1.0, 1.0)
+            posterior = vae.encode(dummy).latent_dist
+            latent_shape = tuple(posterior.mean.shape[1:])  # (4, H/8, W/8)
+        xT = torch.randn(num_samples, *latent_shape, device=device)
+    else:
+        xT = torch.randn(num_samples, *image_shape, device=device)
     # c = torch.arange(10, device=device, dtype=torch.long).repeat_interleave(10) + 1
     # cfg_scale = torch.arange(10, device=device, dtype=torch.float).repeat(10) # samples will have rows c = 0, 1, ..., 9, and cols cfg_scale = 0, 1, ..., 9
     c = torch.zeros(num_samples, device=device, dtype=torch.long)

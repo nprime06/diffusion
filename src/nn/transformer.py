@@ -70,23 +70,23 @@ class TransformerBlock(nn.Module):
 
     def forward(self, res, emb, c=None):
         def modulate(x, scale, shift):
-            return x * (1 + scale) + shift
+            return x * (1 + scale.unsqueeze(1)) + shift.unsqueeze(1)
 
         scale_shift_gate = self.adaLN(emb)
         scale1, shift1, gate1, scale2, shift2, gate2 = scale_shift_gate.chunk(6, dim=-1)
 
         x = modulate(self.ln_self_attn(res), scale1, shift1)
         x = self.self_attn(x)
-        res = res + x * gate1
+        res = res + x * gate1.unsqueeze(1)
 
         if hasattr(self, "cross_attn") and c is not None:
             scale3, shift3, gate3 = self.adaLN_cross(emb).chunk(3, dim=-1)
             x = modulate(self.ln_cross_attn(res), scale3, shift3)
             x = self.cross_attn(x, c)
-            res = res + x * gate3
+            res = res + x * gate3.unsqueeze(1)
 
         # MLP residual
         x = modulate(self.ln_mlp(res), scale2, shift2)
         x = self.mlp(x)
-        res = res + x * gate2
+        res = res + x * gate2.unsqueeze(1)
         return res
