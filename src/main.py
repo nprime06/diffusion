@@ -54,7 +54,8 @@ if args.dataset == 'mnist':
     )
     images_mean, images_std = dataset.get_mean_std()
     image_shape = (1, 28, 28)
-    in_channels = 1 # pixel channels
+    latent_shape = (1, 28, 28) # no vae
+    in_channels = 1 # latent channels
     dataloader = DataLoader(
         dataset,
         batch_size=train_config.batch_size,
@@ -67,7 +68,8 @@ elif args.dataset == 'cifar10':
     dataset = CIFAR10Dataloader(root="/home/willzhao/data/CIFAR_10/")
     images_mean, images_std = dataset.get_mean_std()
     image_shape = (3, 32, 32)
-    in_channels = 3 # pixel channels
+    latent_shape = (3, 32, 32) # no vae
+    in_channels = 3 # latent channels
     dataloader = DataLoader(
         dataset,
         batch_size=train_config.batch_size,
@@ -79,7 +81,8 @@ elif args.dataset == 'cifar10':
 elif args.dataset == 'afhq':
     dataset = AFHQDataloader(root="/home/willzhao/data/afhq")
     images_mean, images_std = dataset.get_mean_std()
-    image_shape = (4, 64, 64) # latent shape
+    image_shape = (3, 512, 512) # image shape
+    latent_shape = (4, 64, 64) # latent shape
     in_channels = 4 # latent channels
     dataloader = DataLoader(
         dataset,
@@ -170,8 +173,8 @@ run_info["param_count"] = int(param_count)
 write_run_yaml(args.run_dir, run_info)
 
 if args.method == 'ddpm':
-    trained_model = train_ddpm(model, dataloader, scheduler, train_config, device, image_shape, images_mean, images_std, vae)
+    trained_model = train_ddpm(model, dataloader, scheduler, train_config, device, image_shape, latent_shape, images_mean, images_std, vae)
 elif args.method == 'fm':
-    trained_model = train_fm(model, dataloader, fm_config, train_config, device, image_shape, images_mean, images_std, vae)
+    trained_model = train_fm(model, dataloader, fm_config, train_config, device, image_shape, latent_shape, images_mean, images_std, vae)
 else:
     raise ValueError(f"Unsupported method: {args.method}")
