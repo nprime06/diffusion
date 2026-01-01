@@ -6,5 +6,6 @@ pyyaml
 matplotlib
 pillow
 diffusers
+huggingface-hub>=0.24.0,<1.0
 safetensors
 accelerate
