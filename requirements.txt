@@ -5,3 +5,6 @@ torchvision
 pyyaml
 matplotlib
 pillow
+diffusers
+safetensors
+accelerate

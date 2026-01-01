@@ -252,8 +252,10 @@ __marimo__/
 .streamlit/secrets.toml
 
 
-# secret file structure :(
+# secret file structure :( (or just a bunch of random files)
+myenv/
 scripts/
 new_gif.py
 plot_loss.py
 view_data.py
+test_sdvae.py

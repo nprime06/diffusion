@@ -10,8 +10,9 @@ args = parser.parse_args()
 from dataclasses import asdict, dataclass
 import torch
 from torch.utils.data import DataLoader
-from data import MNISTDataloader, CIFAR10Dataloader
+from data import MNISTDataloader, CIFAR10Dataloader, AFHQDataloader
 from nn.resunet import ResUNet
+from nn.sdvae import get_vae
 from methods.ddpm.schedule import DDPMScheduler
 from training.train_ddpm import train_ddpm
 from training.train_fm import train_fm
@@ -32,11 +33,11 @@ class TrainConfig:
     learning_rate: float = 3e-4
     weight_decay: float = 1e-2
     grad_clip_norm: float = 1.0
-    max_steps: int = 100000
-    batch_size: int = 1024
+    max_steps: int = 1000
+    batch_size: int = 128
     cfg_proportion: float = 0.8
     run_dir: str = args.run_dir
-    early_checkpoint_every: int = 1000 # steps
+    early_checkpoint_every: int = 500 # steps
     num_early_checkpoints: int = 3
     late_checkpoint_every: int = 25000 # steps
 
@@ -52,6 +53,7 @@ if args.dataset == 'mnist':
     )
     images_mean, images_std = dataset.get_mean_std()
     image_shape = (1, 28, 28)
+    in_channels = 1 # pixel channels
     dataloader = DataLoader(
         dataset,
         batch_size=train_config.batch_size,
@@ -59,10 +61,12 @@ if args.dataset == 'mnist':
         drop_last=True,
     )
     num_classes = 10
+    vae = None
 elif args.dataset == 'cifar10':
     dataset = CIFAR10Dataloader(root="/home/willzhao/data/CIFAR_10/")
     images_mean, images_std = dataset.get_mean_std()
     image_shape = (3, 32, 32)
+    in_channels = 3 # pixel channels
     dataloader = DataLoader(
         dataset,
         batch_size=train_config.batch_size,
@@ -70,6 +74,23 @@ elif args.dataset == 'cifar10':
         drop_last=True,
     )
     num_classes = 10
+    vae = None
+elif args.dataset == 'afhq':
+    dataset = AFHQDataloader(root="/home/willzhao/data/afhq")
+    images_mean, images_std = dataset.get_mean_std()
+    image_shape = (3, 512, 512)
+    in_channels = 4 # latent channels
+    dataloader = DataLoader(
+        dataset,
+        batch_size=train_config.batch_size,
+        shuffle=True,
+        drop_last=True,
+    )
+    num_classes = 3
+    vae = get_vae()
+    vae.to(device)
+    vae = torch.compile(vae)
+    run_info["vae"] = "stabilityai/sd-vae-ft-mse"
 else:
     raise ValueError(f"Unsupported dataset: {args.dataset}")
 
@@ -104,10 +125,10 @@ if args.backbone == 'unet':
         # If None, we infer this from the selected dataset's `image_shape`.
         # (MNIST: 1, CIFAR-10: 3)
         in_channels: int
-        hidden_channels: int = 128
+        hidden_channels: int = 256
         num_layers: int = 3
         embed_dim: int = 256
-    resunet_config = ResUNetConfig(in_channels=int(image_shape[0]))
+    resunet_config = ResUNetConfig(in_channels=in_channels)
     run_info["resunetconfig"] = asdict(resunet_config)
     model = ResUNet(
         in_channels=resunet_config.in_channels, 
@@ -128,8 +149,8 @@ run_info["param_count"] = int(param_count)
 write_run_yaml(args.run_dir, run_info)
 
 if args.method == 'ddpm':
-    trained_model = train_ddpm(model, dataloader, scheduler, train_config, device, image_shape, images_mean, images_std)
+    trained_model = train_ddpm(model, dataloader, scheduler, train_config, device, image_shape, images_mean, images_std, vae)
 elif args.method == 'fm':
-    trained_model = train_fm(model, dataloader, fm_config, train_config, device, image_shape, images_mean, images_std)
+    trained_model = train_fm(model, dataloader, fm_config, train_config, device, image_shape, images_mean, images_std, vae)
 else:
     raise ValueError(f"Unsupported method: {args.method}")

@@ -1,5 +1,6 @@
 import numpy as np
 import idx2numpy as idx
+import os
 import torch
 from torch.utils.data import Dataset
 
@@ -58,3 +59,75 @@ class CIFAR10Dataloader(Dataset): # everything is on cpu
 
     def get_mean_std(self):
         return self.images_mean, self.images_std # (1, 3, 32, 32), (1, 3, 32, 32)
+
+
+class AFHQDataloader(Dataset):
+    def __init__(self, root, image_size=512, augment=True, color_jitter=False):
+        # Lazy import: if torchvision is mis-installed it can segfault at import time,
+        # so we avoid importing it unless AFHQ is actually used.
+        from torchvision.datasets import ImageFolder
+        from torchvision import transforms
+        from torchvision.transforms import InterpolationMode
+        from torch.utils.data import ConcatDataset
+
+        # images: (3, image_size, image_size) in float [0, 1]
+        # note afhq is big
+        self.root = root
+        self.image_size = int(image_size)
+        self.augment = augment
+        self.color_jitter = color_jitter
+
+        tfms = [transforms.Lambda(lambda img: img.convert("RGB"))]
+        if augment:
+            tfms.append(transforms.RandomHorizontalFlip(p=0.5))
+            if color_jitter:
+                tfms.append(transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.02))
+            tfms.append(
+                transforms.RandomResizedCrop(
+                    self.image_size,
+                    scale=(0.9, 1.0),
+                    ratio=(0.95, 1.05),
+                    interpolation=InterpolationMode.BICUBIC,
+                )
+            )
+        else:
+            tfms.append(transforms.Resize(self.image_size, interpolation=InterpolationMode.BICUBIC))
+            tfms.append(transforms.CenterCrop(self.image_size))
+
+        tfms.append(transforms.ToTensor())
+        transform = transforms.Compose(tfms)
+
+        # AFHQ is small and we're training generative models, so we want as much data
+        # as possible: combine any of train/val/test if they exist.
+        train_dir = os.path.join(root, "train")
+        val_dir = os.path.join(root, "val")
+        test_dir = os.path.join(root, "test")
+
+        if os.path.isdir(train_dir) or os.path.isdir(val_dir) or os.path.isdir(test_dir):
+            dss = []
+            if os.path.isdir(train_dir):
+                dss.append(ImageFolder(train_dir, transform=transform))
+            if os.path.isdir(val_dir):
+                dss.append(ImageFolder(val_dir, transform=transform))
+            if len(dss) == 0:
+                raise FileNotFoundError(f"No AFHQ split directories found under: {root}")
+            self.ds = ConcatDataset(dss)
+        else:
+            # If `root` already points directly to an ImageFolder-style directory
+            # (root/{class_name}/*), just use that.
+            self.ds = ImageFolder(root, transform=transform)
+
+    def __len__(self):
+        return len(self.ds)
+
+    def __getitem__(self, idx):
+        image, label = self.ds[idx]  # image: (3, image_size, image_size) float in [0,1]
+        return image, torch.tensor(label, dtype=torch.long)
+
+    def get_mean_std(self):
+        return (torch.zeros(1, 3, self.image_size, self.image_size, dtype=torch.float32), torch.ones(1, 3, self.image_size, self.image_size, dtype=torch.float32))
+
+
+def load_afhq(root, image_size=512, augment=True, color_jitter=False):
+    return AFHQDataloader(root=root, image_size=image_size, augment=augment, color_jitter=color_jitter)
+
