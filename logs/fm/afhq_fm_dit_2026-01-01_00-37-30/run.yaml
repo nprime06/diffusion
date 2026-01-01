@@ -1,0 +1,31 @@
+dataset: afhq
+method: fm
+backbone: dit
+device: cuda
+trainconfig:
+  learning_rate: 0.0003
+  weight_decay: 0.01
+  grad_clip_norm: 1.0
+  max_steps: 1000
+  batch_size: 128
+  cfg_proportion: 0.8
+  run_dir: /home/willzhao/diffusion/logs/fm/afhq_fm_dit_2026-01-01_00-37-30
+  early_checkpoint_every: 500
+  num_early_checkpoints: 3
+  late_checkpoint_every: 25000
+vae: stabilityai/sd-vae-ft-mse
+fmconfig:
+  num_steps: 100
+  sampler: euler
+ditconfig:
+  image_shape:
+  - 3
+  - 512
+  - 512
+  d_model: 512
+  d_embed: 128
+  heads: 8
+  num_layers: 12
+  p: 8
+  cross_attn: false
+param_count: 44872000
