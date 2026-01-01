@@ -9,7 +9,7 @@ from run_io import save_checkpoint, flush_losses, save_samples_gif
 
 SD_LATENT_SCALE = 0.18215
 
-def save_logs(run_dir, loss_buffer, step, model, optimizer, fm_config, device, image_shape, images_mean, images_std, vae, num_samples=9, checkpoint=True):
+def save_logs(run_dir, loss_buffer, step, model, optimizer, fm_config, device, image_shape, images_mean, images_std, vae, num_samples=100, checkpoint=True):
     loss_path = os.path.join(run_dir, "metrics", "loss.jsonl")
     checkpoint_dir = os.path.join(run_dir, "checkpoints")
     samples_dir = os.path.join(run_dir, "samples")
@@ -18,20 +18,11 @@ def save_logs(run_dir, loss_buffer, step, model, optimizer, fm_config, device, i
     if checkpoint:
         save_checkpoint(checkpoint_dir, step, model, optimizer)
 
-    if vae is not None:
-        # Sample in latent space (model state), but sampler will decode for the returned history.
-        with torch.no_grad():
-            dummy = torch.zeros(1, *image_shape, device=device, dtype=torch.float32)
-            dummy = (dummy * 2.0 - 1.0).clamp(-1.0, 1.0)
-            posterior = vae.encode(dummy).latent_dist
-            latent_shape = tuple(posterior.mean.shape[1:])  # (4, H/8, W/8)
-        x0 = torch.randn(num_samples, *latent_shape, device=device)
-    else:
-        x0 = torch.randn(num_samples, *image_shape, device=device)
-    # c = torch.arange(10, device=device, dtype=torch.long).repeat_interleave(10) + 1
-    # cfg_scale = torch.arange(10, device=device, dtype=torch.float).repeat(10) # samples will have rows c = 0, 1, ..., 9, and cols cfg_scale = 0, 1, ..., 9
-    c = torch.zeros(num_samples, device=device, dtype=torch.long)
-    cfg_scale = torch.zeros(num_samples, device=device, dtype=torch.float)
+    x0 = torch.randn(num_samples, *image_shape, device=device)
+    c = torch.arange(10, device=device, dtype=torch.long).repeat_interleave(10) + 1
+    cfg_scale = torch.arange(10, device=device, dtype=torch.float).repeat(10) # samples will have rows c = 0, 1, ..., 9, and cols cfg_scale = 0, 1, ..., 9
+    # c = torch.zeros(num_samples, device=device, dtype=torch.long)
+    # cfg_scale = torch.zeros(num_samples, device=device, dtype=torch.float)
     samples = sample(model, x0, c, cfg_scale, fm_config, vae) # history list from x0 to xT; (T, N, C, H, W)
     samples = (samples * images_std.to(device).reshape(1, 1, *image_shape)) + images_mean.to(device).reshape(1, 1, *image_shape)
     save_samples_gif(samples_dir, step, samples)
@@ -66,12 +57,10 @@ def train_fm(model, dataloader, fm_config, train_config, device, image_shape, im
 
             if vae is not None:
                 with torch.no_grad():
-                    # If we're given RGB images, encode to latents; if already latents, skip.
-                    if images.shape[1] == 3:
-                        images = (images * 2.0 - 1.0).clamp(-1.0, 1.0)
-                        posterior = vae.encode(images).latent_dist
-                        latents = posterior.sample() # (B, 4, H/8, W/8)
-                        images = latents * SD_LATENT_SCALE
+                    images = (images * 2.0 - 1.0).clamp(-1.0, 1.0)
+                    posterior = vae.encode(images).latent_dist
+                    latents = posterior.sample() # (B, 4, H/8, W/8)
+                    images = latents * SD_LATENT_SCALE
             
             if device == "cuda":
                 torch.cuda.synchronize()
@@ -93,7 +82,7 @@ def train_fm(model, dataloader, fm_config, train_config, device, image_shape, im
 
             if step % train_config.early_checkpoint_every == 0 and step < train_config.num_early_checkpoints * train_config.early_checkpoint_every:
                 save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, fm_config, device, image_shape, images_mean, images_std, vae, checkpoint=False)
-            elif step % train_config.late_checkpoint_every == 0:
+            elif step % train_config.late_checkpoint_every == 0 and step > 0:
                 save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, fm_config, device, image_shape, images_mean, images_std, vae)
             
             step += 1
