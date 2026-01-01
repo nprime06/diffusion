@@ -9,7 +9,7 @@ from run_io import save_checkpoint, flush_losses, save_samples_gif
 
 SD_LATENT_SCALE = 0.18215
 
-def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, device, image_shape, images_mean, images_std, vae, num_samples=100, checkpoint=True):
+def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, device, image_shape, images_mean, images_std, vae, num_samples=9, checkpoint=True):
     loss_path = os.path.join(run_dir, "metrics", "loss.jsonl")
     checkpoint_dir = os.path.join(run_dir, "checkpoints")
     samples_dir = os.path.join(run_dir, "samples")

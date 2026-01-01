@@ -9,7 +9,7 @@ from run_io import save_checkpoint, flush_losses, save_samples_gif
 
 SD_LATENT_SCALE = 0.18215
 
-def save_logs(run_dir, loss_buffer, step, model, optimizer, fm_config, device, image_shape, images_mean, images_std, vae, num_samples=100, checkpoint=True):
+def save_logs(run_dir, loss_buffer, step, model, optimizer, fm_config, device, image_shape, images_mean, images_std, vae, num_samples=9, checkpoint=True):
     loss_path = os.path.join(run_dir, "metrics", "loss.jsonl")
     checkpoint_dir = os.path.join(run_dir, "checkpoints")
     samples_dir = os.path.join(run_dir, "samples")
@@ -59,6 +59,10 @@ def train_fm(model, dataloader, fm_config, train_config, device, image_shape, im
                     posterior = vae.encode(images).latent_dist
                     latents = posterior.sample() # (B, 4, H/8, W/8)
                     images = latents * SD_LATENT_SCALE
+            
+            if device == "cuda":
+                torch.cuda.synchronize()
+            print(f"step {step} time: {1000 * (time.time() - t0):.2f}ms")
 
             loss_val = loss(model, images, labels, train_config.cfg_proportion)
 
