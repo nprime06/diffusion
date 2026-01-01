@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/willzhao/diffusion/src/main.py", line 154, in <module>
+    trained_model = train_fm(model, dataloader, fm_config, train_config, device, image_shape, images_mean, images_std, vae)
+  File "/orcd/home/002/willzhao/diffusion/src/training/train_fm.py", line 59, in train_fm
+    posterior = vae.encode(images).latent_dist
+AttributeError: 'function' object has no attribute 'encode'
