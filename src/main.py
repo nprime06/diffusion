@@ -151,7 +151,7 @@ elif args.backbone == 'dit':
         num_layers: int = 12
         p: int = 8
         cross_attn: bool = False
-    dit_config = DiTConfig(image_shape=image_shape)
+    dit_config = DiTConfig(image_shape=latent_shape)
     run_info["ditconfig"] = asdict(dit_config)
     model = DiT(
         d_model=dit_config.d_model,
