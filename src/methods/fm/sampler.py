@@ -13,7 +13,7 @@ def sample(model, x0, c, cfg_scale, fm_config, image_shape, vae): # x0: (B, C, H
         return x_img
 
     x = x0.clone()
-    history = torch.empty((fm_config.num_steps, x0.shape[0], *image_shape), device=x.device, dtype=x.dtype)
+    history = torch.empty((fm_config.num_steps+1, x0.shape[0], *image_shape), device=x.device, dtype=x.dtype)
     if vae is not None:
         with torch.no_grad():
             history[0] = _decode_latents(x)

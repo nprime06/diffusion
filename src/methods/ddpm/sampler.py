@@ -25,7 +25,7 @@ def sample(model, xT, c, cfg_scale, scheduler, image_shape, vae): # xT: (B, C, H
         return x_img
 
     x = xT.clone()
-    history = torch.empty((scheduler.num_steps, xT.shape[0], *image_shape), device=x.device, dtype=x.dtype)
+    history = torch.empty((scheduler.num_steps+1, xT.shape[0], *image_shape), device=x.device, dtype=x.dtype)
     if vae is not None:
         with torch.no_grad():
             history[0] = _decode_latents(x)
