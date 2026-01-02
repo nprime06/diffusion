@@ -23,7 +23,7 @@ def save_logs(run_dir, loss_buffer, step, model, optimizer, fm_config, device, i
     # cfg_scale = torch.arange(10, device=device, dtype=torch.float).repeat(10) # samples will have rows c = 0, 1, ..., 9, and cols cfg_scale = 0, 1, ..., 9
     c = torch.zeros(num_samples, device=device, dtype=torch.long)
     cfg_scale = torch.zeros(num_samples, device=device, dtype=torch.float)
-    samples = sample(model, x0, c, cfg_scale, fm_config, image_shape, vae) # history list from x0 to xT; (T, N, C, H, W)
+    samples = sample(model, x0, c, cfg_scale, fm_config, image_shape, vae, history=True) # history list from x0 to xT; (T, N, C, H, W)
     samples = (samples * images_std.to(device).reshape(1, 1, *image_shape)) + images_mean.to(device).reshape(1, 1, *image_shape)
     save_samples_gif(samples_dir, step, samples)
 
@@ -49,7 +49,7 @@ def train_fm(model, dataloader, fm_config, train_config, device, image_shape, la
     scheduler.step()
 
     loss_buffer = []
-    step = 0
+    step = train_config.start_step
     while step < train_config.max_steps:
         for images, labels in dataloader:
             t0 = time.time()
