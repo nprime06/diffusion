@@ -54,13 +54,6 @@ def train_fm(model, dataloader, fm_config, train_config, device, image_shape, la
         for images, labels in dataloader:
             t0 = time.time()
             images, labels = images.to(device).reshape(-1, *image_shape), labels.to(device)
-
-            if vae is not None:
-                with torch.no_grad():
-                    images = (images * 2.0 - 1.0).clamp(-1.0, 1.0)
-                    posterior = vae.encode(images).latent_dist
-                    latents = posterior.sample() # (B, 4, H/8, W/8)
-                    images = latents * SD_LATENT_SCALE
             
             if device == "cuda":
                 torch.cuda.synchronize()

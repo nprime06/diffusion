@@ -25,19 +25,20 @@ def sample(model, xT, c, cfg_scale, scheduler, vae): # xT: (B, C, H, W), c: (B,)
         return x_img
 
     x = xT.clone()
+    history = torch.empty((scheduler.num_steps, *x.shape), device=x.device, dtype=x.dtype)
     if vae is not None:
         with torch.no_grad():
-            history = [_decode_latents(x)]
+            history[0] = _decode_latents(x)
     else:
-        history = [x]
-        
+        history[0] = x
+
     for t in range(scheduler.num_steps, 0, -1): # all t is on cpu
         t_batch = torch.full((x.shape[0],), t, dtype=torch.long)
         x = single_step(model, x, t_batch, c, cfg_scale, scheduler) # c is (B,), dtype=torch.long, on same device as xT
 
         if vae is not None:
             with torch.no_grad():
-                history.append(_decode_latents(x))
+                history[t] = _decode_latents(x)
         else:
-            history.append(x)
-    return torch.stack(history)
+            history[t] = x
+    return history

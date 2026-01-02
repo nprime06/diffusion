@@ -13,11 +13,12 @@ def sample(model, x0, c, cfg_scale, fm_config, vae): # x0: (B, C, H, W), c: (B,)
         return x_img
 
     x = x0.clone()
+    history = torch.empty((fm_config.num_steps, *x.shape), device=x.device, dtype=x.dtype)
     if vae is not None:
         with torch.no_grad():
-            history = [_decode_latents(x)]
+            history[0] = _decode_latents(x)
     else:
-        history = [x]
+        history[0] = x
     
     for t in range(fm_config.num_steps):
         t_batch = torch.full((x.shape[0],), 1.0 * t / fm_config.num_steps, dtype=x.dtype, device=x.device)
@@ -33,7 +34,7 @@ def sample(model, x0, c, cfg_scale, fm_config, vae): # x0: (B, C, H, W), c: (B,)
 
         if vae is not None:
             with torch.no_grad():
-                history.append(_decode_latents(x))
+                history[t+1] = _decode_latents(x)
         else:
-            history.append(x)
-    return torch.stack(history)
+            history[t+1] = x
+    return history

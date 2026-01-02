@@ -10,7 +10,7 @@ args = parser.parse_args()
 from dataclasses import asdict, dataclass
 import torch
 from torch.utils.data import DataLoader
-from data import MNISTDataloader, CIFAR10Dataloader, AFHQDataloader
+from data import MNISTDataloader, CIFAR10Dataloader, AFHQDataloader, encodedDataloader
 from nn.resunet import ResUNet
 from nn.dit import DiT
 from nn.sdvae import get_vae
@@ -79,20 +79,22 @@ elif args.dataset == 'cifar10':
     num_classes = 10
     vae = None
 elif args.dataset == 'afhq':
-    dataset = AFHQDataloader(root="/home/willzhao/data/afhq")
-    images_mean, images_std = dataset.get_mean_std()
+    pre_encoded_dataset = AFHQDataloader(root="/home/willzhao/data/afhq")
+    images_mean, images_std = pre_encoded_dataset.get_mean_std()
     image_shape = (3, 512, 512) # image shape
     latent_shape = (4, 64, 64) # latent shape
     in_channels = 4 # latent channels
-    dataloader = DataLoader(
-        dataset,
+    pre_encoded_dataloader = DataLoader(
+        pre_encoded_dataset,
         batch_size=train_config.batch_size,
-        shuffle=True,
-        drop_last=True,
-    )
-    num_classes = 3
+        shuffle=False,
+        drop_last=False, # we want to encode all the data
+    ) # this dataloader will just be used to encode the data
     vae = get_vae(device=device)
     run_info["vae"] = "stabilityai/sd-vae-ft-mse"
+    encoded_dataset = encodedDataloader(pre_encoded_dataloader, vae, latent_shape, device)
+    num_classes = 3
+    
 else:
     raise ValueError(f"Unsupported dataset: {args.dataset}")
 

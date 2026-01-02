@@ -1,6 +1,7 @@
 import numpy as np
 import idx2numpy as idx
 import os
+import math
 import torch
 from torch.utils.data import Dataset
 
@@ -127,7 +128,56 @@ class AFHQDataloader(Dataset):
     def get_mean_std(self):
         return (torch.zeros(1, 3, self.image_size, self.image_size, dtype=torch.float32), torch.ones(1, 3, self.image_size, self.image_size, dtype=torch.float32))
 
+# compress dataloader
+# save logvar
+# clamp var
+# make sure to use sd_latent_scale
 
-def load_afhq(root, image_size=512, augment=True, color_jitter=False):
-    return AFHQDataloader(root=root, image_size=image_size, augment=augment, color_jitter=color_jitter)
+SD_LATENT_SCALE = 0.18215
 
+class encodedDataloader(Dataset):
+    """
+    Materializes VAE latents (mu, logvar) for an upstream image dataloader so
+    that later training can draw samples without re-running the encoder.
+    """
+
+    def __init__(self, pre_encoded_dataloader, vae, latent_shape, device, clamp_logvar=(-30.0, 20.0)):
+        self.latent_shape = tuple(latent_shape)
+        total_samples = len(pre_encoded_dataloader.dataset)
+
+        self.mu = torch.empty((total_samples, *self.latent_shape), dtype=torch.float32)
+        self.logvar = torch.empty_like(self.mu)
+        self.labels = torch.empty((total_samples,), dtype=torch.long)
+
+        log_scale = 2.0 * math.log(SD_LATENT_SCALE)
+
+        sample_offset = 0
+
+        with torch.no_grad():
+            for batch_idx, (images, labels) in enumerate(pre_encoded_dataloader):
+                images = images.to(device, non_blocking=True)
+                images = (images * 2.0 - 1.0).clamp(-1.0, 1.0)  # VAE expects inputs in [-1, 1]
+
+                latent_dist = vae.encode(images).latent_dist
+                mu = latent_dist.mean * SD_LATENT_SCALE
+                logvar = latent_dist.logvar + log_scale
+                logvar = logvar.clamp(min=clamp_logvar[0], max=clamp_logvar[1])
+
+                batch_size = mu.shape[0]
+                batch_slice = slice(sample_offset, sample_offset + batch_size)
+
+                self.mu[batch_slice].copy_(mu.detach().cpu())
+                self.logvar[batch_slice].copy_(logvar.detach().cpu())
+                self.labels[batch_slice].copy_(labels.detach().cpu().long())
+
+                sample_offset += batch_size
+
+
+    def __len__(self):
+        return self.mu.shape[0]
+
+    def __getitem__(self, idx):
+        mean = self.mu[idx]
+        logvar = self.logvar[idx]
+        latents = mean + torch.exp(0.5 * logvar) * torch.randn_like(mean)
+        return latents, self.labels[idx]
