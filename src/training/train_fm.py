@@ -53,7 +53,7 @@ def train_fm(model, dataloader, fm_config, train_config, device, image_shape, la
     while step < train_config.max_steps:
         for images, labels in dataloader:
             t0 = time.time()
-            images, labels = images.to(device).reshape(-1, *image_shape), labels.to(device)
+            images, labels = images.to(device).reshape(-1, *latent_shape), labels.to(device)
             
             if device == "cuda":
                 torch.cuda.synchronize()
