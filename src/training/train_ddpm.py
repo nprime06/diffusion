@@ -23,7 +23,7 @@ def save_logs(run_dir, loss_buffer, step, model, optimizer, scheduler, device, i
     # cfg_scale = torch.arange(10, device=device, dtype=torch.float).repeat(10) # samples will have rows c = 0, 1, ..., 9, and cols cfg_scale = 0, 1, ..., 9
     c = torch.zeros(num_samples, device=device, dtype=torch.long)
     cfg_scale = torch.zeros(num_samples, device=device, dtype=torch.float)
-    samples = sample(model, xT, c, cfg_scale, scheduler, vae) # history list from xT to x0; (T, N, C, H, W)
+    samples = sample(model, xT, c, cfg_scale, scheduler, image_shape, vae) # history list from xT to x0; (T, N, C, H, W)
     samples = (samples * images_std.to(device).reshape(1, 1, *image_shape)) + images_mean.to(device).reshape(1, 1, *image_shape)
     save_samples_gif(samples_dir, step, samples)
 

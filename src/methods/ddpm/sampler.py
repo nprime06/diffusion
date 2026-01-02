@@ -18,14 +18,14 @@ def single_step(model, xt, t, c, cfg_scale, scheduler): # xt: (B, C, H, W), t: (
     add_noise = (t != 1).to(device=xt.device, dtype=xt.dtype).view(-1, 1, 1, 1)
     return pred_mu + add_noise * torch.sqrt(beta) * z
 
-def sample(model, xT, c, cfg_scale, scheduler, vae): # xT: (B, C, H, W), c: (B,)
+def sample(model, xT, c, cfg_scale, scheduler, image_shape, vae): # xT: (B, C, H, W), c: (B,)
     def _decode_latents(x_latents: torch.Tensor) -> torch.Tensor:
         x_img = vae.decode(x_latents / SD_LATENT_SCALE).sample
         x_img = (x_img + 1.0) / 2.0
         return x_img
 
     x = xT.clone()
-    history = torch.empty((scheduler.num_steps, *x.shape), device=x.device, dtype=x.dtype)
+    history = torch.empty((scheduler.num_steps, xT.shape[0], *image_shape), device=x.device, dtype=x.dtype)
     if vae is not None:
         with torch.no_grad():
             history[0] = _decode_latents(x)
