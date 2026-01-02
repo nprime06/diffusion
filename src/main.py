@@ -93,6 +93,12 @@ elif args.dataset == 'afhq':
     vae = get_vae(device=device)
     run_info["vae"] = "stabilityai/sd-vae-ft-mse"
     encoded_dataset = encodedDataloader(pre_encoded_dataloader, vae, latent_shape, device)
+    dataloader = DataLoader(
+        encoded_dataset,
+        batch_size=train_config.batch_size,
+        shuffle=True,
+        drop_last=True,
+    )
     num_classes = 3
     
 else:
