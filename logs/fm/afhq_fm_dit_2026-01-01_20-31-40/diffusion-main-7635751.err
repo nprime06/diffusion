@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/home/willzhao/diffusion/src/main.py", line 180, in <module>
+    trained_model = train_fm(model, dataloader, fm_config, train_config, device, image_shape, latent_shape, images_mean, images_std, vae)
+NameError: name 'dataloader' is not defined. Did you mean: 'DataLoader'?
