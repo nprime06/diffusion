@@ -136,11 +136,6 @@ class AFHQDataloader(Dataset):
 SD_LATENT_SCALE = 0.18215
 
 class encodedDataloader(Dataset):
-    """
-    Materializes VAE latents (mu, logvar) for an upstream image dataloader so
-    that later training can draw samples without re-running the encoder.
-    """
-
     def __init__(self, pre_encoded_dataloader, vae, latent_shape, device, clamp_logvar=(-30.0, 20.0)):
         self.latent_shape = tuple(latent_shape)
         total_samples = len(pre_encoded_dataloader.dataset)
@@ -171,7 +166,6 @@ class encodedDataloader(Dataset):
                 self.labels[batch_slice].copy_(labels.detach().cpu().long())
 
                 sample_offset += batch_size
-
 
     def __len__(self):
         return self.mu.shape[0]
