@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/home/willzhao/diffusion/src/main.py", line 186, in <module>
+    trained_model = train_fm(model, dataloader, fm_config, train_config, device, image_shape, latent_shape, images_mean, images_std, vae)
+  File "/orcd/home/002/willzhao/diffusion/src/training/train_fm.py", line 77, in train_fm
+    save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, fm_config, device, image_shape, latent_shape, images_mean, images_std, vae, checkpoint=False)
+  File "/orcd/home/002/willzhao/diffusion/src/training/train_fm.py", line 26, in save_logs
+    samples = sample(model, x0, c, cfg_scale, fm_config, image_shape, vae) # history list from x0 to xT; (T, N, C, H, W)
+  File "/orcd/home/002/willzhao/diffusion/src/methods/fm/sampler.py", line 37, in sample
+    history[t+1] = _decode_latents(x)
+IndexError: index 100 is out of bounds for dimension 0 with size 100
