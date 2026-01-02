@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/willzhao/diffusion/src/main.py", line 187, in <module>
+    trained_model = train_fm(model, dataloader, fm_config, train_config, device, image_shape, latent_shape, images_mean, images_std, vae)
+  File "/orcd/home/002/willzhao/diffusion/src/training/train_fm.py", line 79, in train_fm
+    save_logs(train_config.run_dir, loss_buffer, step, model, optimizer, fm_config, device, image_shape, latent_shape, images_mean, images_std, vae)
+  File "/orcd/home/002/willzhao/diffusion/src/training/train_fm.py", line 26, in save_logs
+    samples = sample(model, x0, c, cfg_scale, fm_config, image_shape, vae, history=True) # history list from x0 to xT; (T, N, C, H, W)
+TypeError: sample() got an unexpected keyword argument 'history'
